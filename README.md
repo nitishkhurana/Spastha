@@ -73,7 +73,7 @@ install`, no server.
   output for the included sample lease and sample job-offer comparison.
   This is what a judge sees with zero setup.
 - **Live mode:** click the "API key" button top-right, paste a free Google
-  Gemini API key, and every panel calls Gemini 2.5 Flash on your own pasted
+  Gemini API key, and every panel calls Gemini 3.8 Flash on your own pasted
   or uploaded text instead.
 
 ## Deploying it for free
@@ -98,7 +98,7 @@ hackathon demo) is typically ₹800–1,000/year from any registrar.
 3. Paste it into Spashta's API key modal
 
 The free tier (as of this writing) covers roughly 1,500 requests/day on
-Gemini 2.5 Flash — far more than a hackathon demo or small pilot needs.
+Gemini 3.8 Flash — far more than a hackathon demo or small pilot needs.
 
 **Note:** live API calls work once this page is self-hosted. If you're
 viewing this as a Claude Artifact preview, outbound API calls are sandboxed
@@ -108,7 +108,7 @@ and it will gracefully fall back to demo output — that's expected, not a bug.
 
 | Piece | Free option used here | Free limit | Cost to start |
 |---|---|---|---|
-| AI model | Google Gemini 2.5 Flash API | ~1,500 requests/day | ₹0 |
+| AI model | Google Gemini 3.8 Flash API | ~1,500 requests/day | ₹0 |
 | Hosting | GitHub Pages / Netlify / Vercel / Cloudflare Pages | Unlimited static hosting | ₹0 |
 | PDF reading | pdf.js (runs in-browser) | No server, no limit | ₹0 |
 | Storage | Browser `localStorage` only | No DB needed for MVP | ₹0 |
@@ -117,7 +117,7 @@ and it will gracefully fall back to demo output — that's expected, not a bug.
 
 **Total to build and demo: ₹0.** Money only enters the picture once you're
 past free-tier limits — at which point it's a funded pilot, not a
-hackathon project, and Gemini 2.5 Flash's paid tier is still roughly
+hackathon project, and Gemini 3.8 Flash's paid tier is still roughly
 $0.075 per million input tokens (a few hundred document analyses per
 rupee).
 
