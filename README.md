@@ -183,25 +183,42 @@ rupee).
 
 ## Architecture (why it's built this way)
 
-```
-Browser (index.html, single file)
- ├─ Document input: paste / upload (pdf.js extracts text client-side)
- ├─ AI layer, tried in order:
- │    1. Visitor's own Gemini key, if set (retry + model fallback)
- │    2. Visitor's own Groq key, if set
- │    3. Shared proxy/worker.js (optional) — zero-setup live AI for
- │       every visitor, keys held server-side, never sent to the browser
- │    4. Hand-written mock data, if everything above is unavailable
- ├─ 7 panels: Summary · Risk flags · Ask · Negotiate · What if…? · Compare · Lawyer prep
- └─ State: localStorage only (API keys, language preference)
+```mermaid
+flowchart TD
+    Visitor(["Visitor opens the link"]) --> Pages["GitHub Pages<br/>serves index.html"]
+    Pages --> UI["Paste / upload a document"]
+
+    subgraph Client["Browser — everything in this box runs client-side"]
+        UI --> PDFJS["pdf.js<br/>extracts PDF text locally"]
+        PDFJS --> CallAI{"callAI()<br/>tries in order"}
+        CallAI -->|"1 · your Gemini key, if set"| DirectGemini["Direct call<br/>(your key, in the browser)"]
+        CallAI -->|"2 · your Groq key, if set"| DirectGroq["Direct call<br/>(your key, in the browser)"]
+        CallAI -->|"3 · default, zero setup"| ProxyCall["POST to Worker<br/>(no key attached)"]
+        CallAI -->|"4 · everything above failed"| Mock["Demo data<br/>hand-written, works offline"]
+        DirectGemini --> Panels
+        DirectGroq --> Panels
+        Mock --> Panels
+        Panels["7 panels render:<br/>Summary · Risk flags · Ask · Negotiate<br/>What if…? · Compare · Lawyer prep"]
+        LocalStorage[("localStorage<br/>API keys · language pref")]
+    end
+
+    DirectGemini -.-> GeminiAPI[["Gemini<br/>Interactions API"]]
+    DirectGroq -.-> GroqAPI[["Groq<br/>chat completions"]]
+
+    subgraph CFWorker["Cloudflare Worker — proxy/worker.js (optional)"]
+        OriginCheck{"Origin matches your<br/>GitHub Pages domain?"}
+        OriginCheck -->|"no"| Forbidden["403 Forbidden"]
+        OriginCheck -->|"yes"| Provider{"provider?"}
+        Provider -->|"gemini"| SecretG["env.GEMINI_API_KEY<br/>server-side secret"]
+        Provider -->|"groq"| SecretR["env.GROQ_API_KEY<br/>server-side secret"]
+    end
+
+    ProxyCall --> OriginCheck
+    SecretG -.-> GeminiAPI
+    SecretR -.-> GroqAPI
 ```
 
-No backend by design for the site itself: it keeps hosting free, keeps
-the user's document off any server Spashta controls (privacy matters more
-here than in most apps), and keeps the submission deployable in one
-click. The one optional exception is the AI proxy (see above) — a single
-small Worker whose only job is holding the site owner's own keys, so
-evaluators don't need their own.
+No backend for the site itself, by design: everything above the "Cloudflare Worker" box runs entirely in the visitor's browser, and the user's document never leaves it unless they've chosen to enable live AI. This keeps hosting free, keeps documents off any server Spashta controls (privacy matters more here than in most apps), and keeps the submission deployable in one click. The Worker is the one narrow exception — the only place any API key exists server-side, and it does nothing but check the request's origin and forward to Gemini/Groq, so evaluators get live AI with zero setup (see `proxy/worker.js` and "Deploying the AI proxy" above).
 
 ## Roadmap beyond this demo
 
