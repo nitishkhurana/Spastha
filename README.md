@@ -217,6 +217,37 @@ evaluators don't need their own.
   (e.g. NALSA, state rent acts) would let risk flags cite the actual rule,
   not just a general heuristic.
 
+## Testing
+
+Dev-only — `package.json` and `node_modules` exist purely to run tests
+and never touch the deployed site (GitHub Pages serves `index.html`
+directly, nothing else).
+
+```bash
+npm install
+npx playwright install chromium   # first time only
+npm test                          # unit + end-to-end
+```
+
+- **`test/unit`** — `node --test`, zero dependencies. Tests
+  `proxy/worker.js`'s own logic (origin/CORS enforcement, request
+  routing, key placement, error handling) against a mocked upstream
+  fetch — no real network, no real keys.
+- **`test/e2e`** — Playwright, drives the real `index.html` via `file://`
+  in a real Chromium. Covers the golden path (sample-lease analysis
+  across all 7 tabs), the glossary, PDF upload, the language toggle, and
+  the API-key modal's accessibility (focus trap, Escape, label wiring).
+  Runs against demo/mock output by design: the AI proxy is a different
+  origin from `file://` and is correctly rejected by the Worker's own
+  origin check, so these tests are fast, deterministic, and never burn
+  real API quota.
+
+This suite caught a real bug during development: an i18n helper was
+overwriting `<label data-i="browseText">`'s `textContent`, which silently
+deleted the `<input>` nested inside it — breaking the PDF-upload file
+picker in a way that manual testing with dev-tools JS calls never
+exercised. Fixed in the same change that added the test.
+
 ## Disclaimer
 
 Spashta explains documents and drafts communications — it does not replace

@@ -1,0 +1,14 @@
+{
+  "name": "spashta",
+  "private": true,
+  "type": "module",
+  "description": "Tests only. The app itself (index.html) is a zero-build static file — this package.json exists purely to run the test suite and is not part of the deployed site.",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test test/unit/*.test.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
