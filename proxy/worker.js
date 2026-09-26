@@ -54,6 +54,7 @@ export default {
             model: GEMINI_MODEL,
             system_instruction: system,
             input,
+            generation_config: { seed: 42 },
             ...(jsonMode ? { response_format: { type: 'text', mime_type: 'application/json' } } : {}),
           }),
         });
@@ -72,6 +73,8 @@ export default {
               { role: 'system', content: system },
               { role: 'user', content: input },
             ],
+            temperature: 0.2,
+            seed: 42,
             ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
           }),
         });
