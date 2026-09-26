@@ -1,0 +1,1125 @@
+<title>Spashta</title>
+<meta name="description" content="Spashta turns dense legal documents into plain-language summaries, flags risky clauses, and drafts the message you send back — free to run, nothing stored on a server.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --paper:#F6F7FB; --paper-raised:#FFFFFF; --paper-sunken:#EEF0F9;
+  --ink-900:#12172B; --ink-700:#454C6B; --ink-500:#6C7290;
+  --line:#DADFEF; --line-strong:#C2C9E6;
+  --indigo-500:#3454D1; --indigo-600:#2A43AA; --indigo-100:#E7ECFC;
+  --marigold-500:#C97A1E; --marigold-100:#FBEBD5;
+  --signal-red:#B23A22; --signal-red-100:#F7E3DE;
+  --signal-amber:#93690E; --signal-amber-100:#F6ECD8;
+  --signal-green:#2F6B4B; --signal-green-100:#E2EFE8;
+  --shadow-sm:0 1px 2px rgba(18,23,43,0.07);
+  --shadow-md:0 8px 24px rgba(18,23,43,0.08);
+  --radius-s:10px; --radius-m:16px; --radius-l:24px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0B0E1A; --paper-raised:#141A2E; --paper-sunken:#0F1424;
+    --ink-900:#EDEFF7; --ink-700:#B7BCD6; --ink-500:#8D93B5;
+    --line:#262C46; --line-strong:#333B63;
+    --indigo-500:#7C97FF; --indigo-600:#9DB1FF; --indigo-100:#1B2447;
+    --marigold-500:#E3A159; --marigold-100:#3A2C18;
+    --signal-red:#E2694F; --signal-red-100:#3A2019;
+    --signal-amber:#D6A648; --signal-amber-100:#362C15;
+    --signal-green:#5FAE85; --signal-green-100:#17301F;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.35);
+    --shadow-md:0 12px 30px rgba(0,0,0,0.4);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0B0E1A; --paper-raised:#141A2E; --paper-sunken:#0F1424;
+  --ink-900:#EDEFF7; --ink-700:#B7BCD6; --ink-500:#8D93B5;
+  --line:#262C46; --line-strong:#333B63;
+  --indigo-500:#7C97FF; --indigo-600:#9DB1FF; --indigo-100:#1B2447;
+  --marigold-500:#E3A159; --marigold-100:#3A2C18;
+  --signal-red:#E2694F; --signal-red-100:#3A2019;
+  --signal-amber:#D6A648; --signal-amber-100:#362C15;
+  --signal-green:#5FAE85; --signal-green-100:#17301F;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.35);
+  --shadow-md:0 12px 30px rgba(0,0,0,0.4);
+  color-scheme:dark;
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box;}
+body{
+  background:var(--paper); color:var(--ink-900);
+  font-family:"IBM Plex Sans", "Noto Sans Devanagari", system-ui, sans-serif;
+  font-size:16px; line-height:1.55; padding-inline:0;
+}
+[lang="hi"], .lang-hi{ font-family:"Noto Sans Devanagari","IBM Plex Sans",sans-serif; }
+h1,h2,h3,h4{ font-family:"Fraunces", Georgia, serif; font-weight:600; line-height:1.15; text-wrap:balance; margin:0; color:var(--ink-900); }
+p{margin:0;}
+a{color:var(--indigo-500);}
+.mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
+::selection{ background:var(--indigo-100); }
+:focus-visible{ outline:2px solid var(--indigo-500); outline-offset:2px; }
+button{ font-family:inherit; cursor:pointer; }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; } }
+
+.wrap{ max-width:1180px; margin-inline:auto; padding-inline:20px; }
+.shell{ padding-inline:16px; }
+@media (min-width:640px){ .shell{ padding-inline:32px; } }
+
+/* ============ NAV ============ */
+.nav{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:14px; }
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{ width:34px; height:34px; border-radius:9px; background:linear-gradient(155deg,var(--indigo-500),var(--indigo-600)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:"Fraunces",serif; font-weight:700; font-size:17px; flex:none; box-shadow:var(--shadow-sm); }
+.brand-name{ font-family:"Fraunces",serif; font-weight:600; font-size:19px; letter-spacing:-0.01em; }
+.brand-tag{ display:none; font-size:12px; color:var(--ink-500); border-left:1px solid var(--line); padding-left:10px; margin-left:2px; }
+@media(min-width:560px){ .brand-tag{display:inline;} }
+.nav-actions{ display:flex; align-items:center; gap:8px; }
+.pillbtn{ display:inline-flex; align-items:center; gap:6px; background:var(--paper-raised); border:1px solid var(--line); color:var(--ink-700); font-size:13px; font-weight:500; padding:7px 12px; border-radius:999px; transition:border-color .15s, color .15s; }
+.pillbtn:hover{ border-color:var(--line-strong); color:var(--ink-900); }
+.pillbtn.active{ background:var(--indigo-100); border-color:var(--indigo-500); color:var(--indigo-600); }
+
+/* ============ HERO ============ */
+.hero{ padding-block:56px 40px; }
+.hero-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center; }
+@media(max-width:860px){ .hero-grid{ grid-template-columns:1fr; gap:36px; } }
+.eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--marigold-500); background:var(--marigold-100); padding:6px 12px; border-radius:999px; }
+.hero h1{ font-size:clamp(32px,4.6vw,50px); margin-top:16px; }
+.hero .accent{ color:var(--indigo-500); }
+.hero-sub{ margin-top:16px; font-size:17px; color:var(--ink-700); max-width:52ch; }
+.hero-ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.btn{ border:none; border-radius:12px; padding:13px 22px; font-size:15px; font-weight:600; display:inline-flex; align-items:center; gap:8px; transition:transform .12s, box-shadow .12s, background .15s; }
+.btn:active{ transform:translateY(1px); }
+.btn-primary{ background:var(--indigo-500); color:#fff; box-shadow:var(--shadow-sm); }
+.btn-primary:hover{ background:var(--indigo-600); box-shadow:var(--shadow-md); }
+.btn-ghost{ background:transparent; color:var(--ink-900); border:1px solid var(--line-strong); }
+.btn-ghost:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
+.stat-row{ display:flex; gap:28px; margin-top:34px; flex-wrap:wrap; }
+.stat b{ display:block; font-family:"Fraunces",serif; font-size:26px; font-weight:600; font-variant-numeric:tabular-nums; }
+.stat span{ font-size:12.5px; color:var(--ink-500); }
+
+/* hero preview card */
+.doc-card{ background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius-l); box-shadow:var(--shadow-md); padding:22px; }
+.doc-card-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.doc-card-top span{ font-size:12px; color:var(--ink-500); font-weight:500; }
+.dots{ display:flex; gap:5px; }
+.dots i{ width:7px; height:7px; border-radius:50%; background:var(--line-strong); display:block; }
+.flag-row{ display:flex; gap:10px; padding:12px; border-radius:var(--radius-s); margin-bottom:10px; border:1px solid var(--line); background:var(--paper-sunken); }
+.flag-row .stripe{ width:4px; border-radius:3px; flex:none; }
+.flag-row.risk-high .stripe{ background:var(--signal-red); }
+.flag-row.risk-med .stripe{ background:var(--signal-amber); }
+.flag-row.risk-low .stripe{ background:var(--signal-green); }
+.flag-row .fbody{ font-size:13px; }
+.flag-row .fbody b{ display:block; font-size:12.5px; margin-bottom:2px; }
+.tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:2px 7px; border-radius:5px; }
+.tag.risk-high{ background:var(--signal-red-100); color:var(--signal-red); }
+.tag.risk-med{ background:var(--signal-amber-100); color:var(--signal-amber); }
+.tag.risk-low{ background:var(--signal-green-100); color:var(--signal-green); }
+
+/* ============ HOW IT WORKS ============ */
+.how{ padding-block:36px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--paper-sunken); }
+.how-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+@media(max-width:760px){ .how-grid{ grid-template-columns:1fr; } }
+.how-step{ display:flex; gap:14px; }
+.how-num{ font-family:"Fraunces",serif; font-weight:600; font-size:22px; color:var(--indigo-500); flex:none; width:38px; }
+.how-step h4{ font-size:16px; margin-bottom:5px; }
+.how-step p{ font-size:13.5px; color:var(--ink-700); }
+
+/* ============ APP ============ */
+.app{ padding-block:56px; }
+.app-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+.app-head h2{ font-size:clamp(24px,3vw,32px); }
+.app-head p{ color:var(--ink-700); font-size:14.5px; margin-top:6px; max-width:60ch; }
+
+.input-tabs{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.itab{ background:var(--paper-raised); border:1px solid var(--line); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:500; color:var(--ink-700); }
+.itab.active{ background:var(--ink-900); color:var(--paper); border-color:var(--ink-900); }
+
+.input-panel{ background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius-m); padding:18px; box-shadow:var(--shadow-sm); }
+textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--line); border-radius:var(--radius-s); padding:12px 14px; font-family:"IBM Plex Mono",monospace; font-size:12.5px; background:var(--paper-sunken); color:var(--ink-900); line-height:1.6; }
+.dropzone{ border:1.5px dashed var(--line-strong); border-radius:var(--radius-s); padding:34px 16px; text-align:center; color:var(--ink-500); font-size:13.5px; }
+.dropzone.drag{ border-color:var(--indigo-500); color:var(--indigo-500); background:var(--indigo-100); }
+.dropzone input{ display:none; }
+.filepick{ display:inline-block; margin-top:10px; font-size:13px; font-weight:600; color:var(--indigo-500); border-bottom:1px solid var(--indigo-500); padding-bottom:1px; }
+.panel-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; gap:12px; flex-wrap:wrap; }
+.hint{ font-size:12px; color:var(--ink-500); }
+
+/* workspace */
+.workspace{ margin-top:28px; display:grid; grid-template-columns:210px 1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; box-shadow:var(--shadow-sm); background:var(--paper-raised); }
+@media(max-width:780px){ .workspace{ grid-template-columns:1fr; } }
+.folder-tabs{ background:var(--paper-sunken); border-right:1px solid var(--line); padding:14px 10px; display:flex; flex-direction:column; gap:3px; }
+@media(max-width:780px){ .folder-tabs{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line); } }
+.ftab{ text-align:left; background:transparent; border:none; padding:10px 12px; border-radius:var(--radius-s); font-size:13.5px; font-weight:500; color:var(--ink-700); display:flex; align-items:center; gap:9px; white-space:nowrap; }
+.ftab:hover{ background:var(--paper-raised); }
+.ftab.active{ background:var(--paper-raised); color:var(--indigo-500); font-weight:600; box-shadow:var(--shadow-sm); }
+.ftab .dot{ width:6px; height:6px; border-radius:50%; background:var(--line-strong); flex:none; }
+.ftab.active .dot{ background:var(--indigo-500); }
+
+.panelbody{ padding:24px; min-height:340px; }
+.panelbody h3{ font-size:19px; margin-bottom:4px; }
+.panel-sub{ font-size:13px; color:var(--ink-500); margin-bottom:18px; }
+.loading{ display:flex; align-items:center; gap:10px; color:var(--ink-500); font-size:13.5px; padding:30px 0; }
+.spinner{ width:16px; height:16px; border-radius:50%; border:2px solid var(--line); border-top-color:var(--indigo-500); animation:spin .8s linear infinite; flex:none; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.summary-text{ font-size:15px; color:var(--ink-700); line-height:1.75; white-space:pre-line; }
+.badge-row{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+.badge{ font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px; background:var(--paper-sunken); border:1px solid var(--line); color:var(--ink-700); }
+
+.clause-card{ border:1px solid var(--line); border-radius:var(--radius-s); margin-bottom:12px; overflow:hidden; }
+.clause-head{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--paper-sunken); gap:10px; }
+.clause-head b{ font-size:13.5px; }
+.clause-body{ padding:14px; }
+.excerpt{ font-family:"IBM Plex Mono",monospace; font-size:12px; background:var(--paper-sunken); border-left:3px solid var(--line-strong); padding:10px 12px; border-radius:0 var(--radius-s) var(--radius-s) 0; color:var(--ink-700); margin-bottom:10px; }
+.clause-body .explain{ font-size:13.5px; color:var(--ink-900); margin-bottom:10px; }
+.clause-body .fix{ font-size:13px; color:var(--ink-700); border-top:1px dashed var(--line); padding-top:10px; }
+.clause-body .fix b{ color:var(--signal-green); }
+.clause-card.risk-high .clause-head{ border-left:3px solid var(--signal-red); }
+.clause-card.risk-med .clause-head{ border-left:3px solid var(--signal-amber); }
+.clause-card.risk-low .clause-head{ border-left:3px solid var(--signal-green); }
+
+.chat-log{ display:flex; flex-direction:column; gap:12px; margin-bottom:14px; max-height:420px; overflow-y:auto; padding-right:4px; }
+.msg{ max-width:80%; padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.55; }
+.msg.user{ align-self:flex-end; background:var(--indigo-500); color:#fff; border-bottom-right-radius:4px; }
+.msg.bot{ align-self:flex-start; background:var(--paper-sunken); border:1px solid var(--line); border-bottom-left-radius:4px; }
+.chat-form{ display:flex; gap:8px; }
+.chat-form input{ flex:1; border:1px solid var(--line); border-radius:999px; padding:11px 16px; font-size:14px; background:var(--paper-raised); color:var(--ink-900); }
+.chat-form button{ background:var(--indigo-500); color:#fff; border:none; border-radius:999px; padding:0 18px; font-weight:600; font-size:13.5px; }
+.chip-row{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.chip{ background:var(--paper-sunken); border:1px solid var(--line); font-size:12.5px; padding:6px 12px; border-radius:999px; color:var(--ink-700); }
+.chip:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
+
+.script-box{ background:var(--paper-sunken); border:1px solid var(--line); border-radius:var(--radius-s); padding:18px; font-size:13.5px; line-height:1.75; white-space:pre-line; margin-bottom:14px; font-family:"IBM Plex Mono",monospace; }
+.copybtn{ background:var(--paper-raised); border:1px solid var(--line-strong); border-radius:999px; padding:8px 16px; font-size:13px; font-weight:600; color:var(--ink-900); }
+.copybtn:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
+.copybtn.copied{ background:var(--signal-green-100); border-color:var(--signal-green); color:var(--signal-green); }
+
+.compare-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius-s); overflow:hidden; }
+@media(max-width:640px){ .compare-grid{ grid-template-columns:1fr; } }
+.compare-col{ background:var(--paper-raised); padding:14px; }
+.compare-col h4{ font-size:14px; margin-bottom:10px; }
+.compare-row{ display:flex; justify-content:space-between; gap:8px; padding:9px 0; border-top:1px solid var(--line); font-size:13px; }
+.compare-row:first-of-type{ border-top:none; }
+.compare-row .better{ color:var(--signal-green); font-weight:600; }
+.verdict{ margin-top:14px; padding:14px; background:var(--indigo-100); border-radius:var(--radius-s); font-size:13.5px; color:var(--ink-900); }
+
+.brief-grid{ display:grid; gap:16px; }
+.brief-block{ border:1px solid var(--line); border-radius:var(--radius-s); padding:14px 16px; }
+.brief-block h4{ font-size:13px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-500); margin-bottom:8px; }
+.brief-block ul{ margin:0; padding-left:18px; font-size:13.5px; color:var(--ink-900); display:flex; flex-direction:column; gap:6px; }
+
+.toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink-900); color:var(--paper); font-size:13px; padding:11px 18px; border-radius:999px; box-shadow:var(--shadow-md); opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:100; max-width:90vw; text-align:center; }
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ============ COST TABLE ============ */
+.costs{ padding-block:52px; border-top:1px solid var(--line); }
+.cost-table{ width:100%; border-collapse:collapse; margin-top:20px; font-size:13.5px; }
+.cost-table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius-m); }
+.cost-table th{ text-align:left; background:var(--paper-sunken); padding:12px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-500); white-space:nowrap; }
+.cost-table td{ padding:13px 16px; border-top:1px solid var(--line); vertical-align:top; }
+.cost-table tr td:first-child{ font-weight:600; white-space:nowrap; }
+.cost-pill{ display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--signal-green-100); color:var(--signal-green); white-space:nowrap; }
+.total-line{ margin-top:16px; font-size:14px; color:var(--ink-700); }
+.total-line b{ color:var(--ink-900); }
+
+/* ============ ROADMAP ============ */
+.roadmap{ padding-block:52px; background:var(--paper-sunken); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.road-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:22px; }
+@media(max-width:820px){ .road-grid{ grid-template-columns:1fr; } }
+.road-card{ background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius-m); padding:18px; }
+.road-card .tag{ background:var(--indigo-100); color:var(--indigo-600); margin-bottom:10px; }
+.road-card h4{ font-size:15.5px; margin-bottom:6px; }
+.road-card p{ font-size:13px; color:var(--ink-700); }
+
+/* ============ FOOTER ============ */
+footer{ padding-block:34px; }
+.disclaimer{ background:var(--marigold-100); border:1px solid color-mix(in srgb, var(--marigold-500) 40%, transparent); border-radius:var(--radius-m); padding:16px 18px; font-size:13px; color:var(--ink-900); display:flex; gap:12px; margin-bottom:24px; }
+.disclaimer b{ color:var(--marigold-500); }
+.foot-row{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12.5px; color:var(--ink-500); }
+
+/* ============ MODAL ============ */
+.modal-overlay{ position:fixed; inset:0; background:rgba(10,12,24,.5); display:flex; align-items:center; justify-content:center; z-index:200; padding:20px; }
+.modal-overlay[hidden]{ display:none; }
+.modal{ background:var(--paper-raised); border-radius:var(--radius-l); padding:26px; max-width:440px; width:100%; box-shadow:var(--shadow-md); border:1px solid var(--line); }
+.modal h3{ font-size:18px; margin-bottom:6px; }
+.modal p{ font-size:13.5px; color:var(--ink-700); margin-bottom:14px; }
+.modal input{ width:100%; border:1px solid var(--line); border-radius:var(--radius-s); padding:11px 13px; font-size:14px; background:var(--paper-sunken); color:var(--ink-900); font-family:"IBM Plex Mono",monospace; margin-bottom:12px; }
+.modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:6px; }
+.modal-note{ font-size:12px; color:var(--ink-500); background:var(--paper-sunken); border-radius:var(--radius-s); padding:10px 12px; margin-top:14px; }
+
+/* ============ SCORE / EXPOSURE ============ */
+.score-strip{ display:flex; gap:18px; align-items:center; background:var(--paper-sunken); border:1px solid var(--line); border-radius:var(--radius-m); padding:16px 18px; margin-bottom:8px; flex-wrap:wrap; }
+.score-num{ font-family:"Fraunces",serif; font-size:32px; font-weight:600; font-variant-numeric:tabular-nums; flex:none; line-height:1; }
+.score-num small{ font-family:"IBM Plex Sans",sans-serif; font-size:11.5px; font-weight:500; color:var(--ink-500); display:block; margin-top:3px; text-transform:uppercase; letter-spacing:.03em; }
+.score-bar-wrap{ flex:1; min-width:160px; }
+.score-bar{ height:8px; border-radius:99px; background:var(--line); overflow:hidden; }
+.score-bar > div{ height:100%; border-radius:99px; transition:width .4s; }
+.score-label{ font-size:12.5px; margin-top:7px; font-weight:600; }
+.exposure-line{ font-size:13px; color:var(--ink-900); background:var(--marigold-100); border-radius:var(--radius-s); padding:11px 14px; margin-bottom:16px; }
+.exposure-line b{ color:var(--marigold-500); font-variant-numeric:tabular-nums; }
+
+/* ============ GLOSSARY ============ */
+.gloss{ border-bottom:1.5px dotted var(--indigo-500); font-weight:600; cursor:pointer; background:none; border-top:none; border-left:none; border-right:none; color:inherit; font-family:inherit; font-size:inherit; padding:0; }
+
+/* ============ INSIGHT / SPEAK ============ */
+.insight-card{ margin-top:16px; background:var(--indigo-100); border-radius:var(--radius-s); padding:12px 14px; font-size:13px; color:var(--ink-900); display:flex; gap:10px; align-items:flex-start; }
+.insight-card b{ color:var(--indigo-600); }
+.action-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+
+/* ============ SCENARIOS ============ */
+.scenario-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+@media(max-width:560px){ .scenario-grid{ grid-template-columns:1fr; } }
+.scenario-btn{ text-align:left; background:var(--paper-sunken); border:1px solid var(--line); border-radius:var(--radius-s); padding:12px 14px; font-size:13.5px; color:var(--ink-900); font-weight:500; }
+.scenario-btn:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
+#scenarioAnswer{ margin-top:16px; }
+</style>
+
+<!-- ============ NAV ============ -->
+<nav class="nav"><div class="wrap nav-inner">
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div class="brand-name">Spashta</div>
+    <div class="brand-tag" data-i="tag">plain-language legal help</div>
+  </div>
+  <div class="nav-actions">
+    <button class="pillbtn active" id="langEn" onclick="setLang('en')">EN</button>
+    <button class="pillbtn" id="langHi" onclick="setLang('hi')">हिं</button>
+    <button class="pillbtn" id="keyBtn" onclick="openModal()">⚙ <span data-i="apiKeyBtn">API key</span></button>
+  </div>
+</div></nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="eyebrow">● <span data-i="eyebrow">GenAI for Legal Access</span></span>
+    <h1 data-i-html="heroTitle">Understand any contract <span class="accent">before you sign it.</span></h1>
+    <p class="hero-sub" data-i="heroSub">Paste a lease, offer letter, or policy document. Spashta explains it in plain language, flags the clauses that work against you, and writes the email you send back — all before you spend a rupee on a lawyer.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary" onclick="scrollToApp()" data-i="ctaPrimary">Try the live demo ↓</button>
+      <button class="btn btn-ghost" onclick="loadSample()" data-i="ctaGhost">Load sample lease</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b>₹0</b><span data-i="stat1">to run this demo</span></div>
+      <div class="stat"><b>7</b><span data-i="stat2">clause risks it checks for</span></div>
+      <div class="stat"><b>2</b><span data-i="stat3">languages, more on request</span></div>
+    </div>
+  </div>
+  <div class="doc-card">
+    <div class="doc-card-top"><span data-i="previewLabel">rental_agreement.pdf — risk scan</span><div class="dots"><i></i><i></i><i></i></div></div>
+    <div class="flag-row risk-high"><div class="stripe"></div><div class="fbody"><span class="tag risk-high" data-i="high">high risk</span><b data-i="pv1t">Security deposit: 10 months' rent</b><span data-i="pv1d">Forfeited entirely if you leave before 11 months — unusually steep and rarely enforceable as-is.</span></div></div>
+    <div class="flag-row risk-med"><div class="stripe"></div><div class="fbody"><span class="tag risk-med" data-i="med">medium risk</span><b data-i="pv2t">No repair-cost split</b><span data-i="pv2d">Tenant pays for "all repairs" with no line between wear-and-tear and structural damage.</span></div></div>
+    <div class="flag-row risk-low"><div class="stripe"></div><div class="fbody"><span class="tag risk-low" data-i="low">looks fine</span><b data-i="pv3t">Notice period: 30 days</b><span data-i="pv3d">Standard and mutual — no changes needed here.</span></div></div>
+  </div>
+</div></section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how"><div class="wrap how-grid">
+  <div class="how-step"><div class="how-num">01</div><div><h4 data-i="how1t">Bring the document</h4><p data-i="how1d">Paste text, upload a PDF/TXT, or start from a sample lease — nothing leaves your browser except the AI call itself.</p></div></div>
+  <div class="how-step"><div class="how-num">02</div><div><h4 data-i="how2t">Spashta reads it like a document, not a search result</h4><p data-i="how2d">It summarises, scores every clause for risk, and stays grounded in your document when you ask questions.</p></div></div>
+  <div class="how-step"><div class="how-num">03</div><div><h4 data-i="how3t">You get something to act on</h4><p data-i="how3d">A negotiation email, a lawyer-ready briefing, or a side-by-side comparison — not just an explanation.</p></div></div>
+</div></section>
+
+<!-- ============ APP ============ -->
+<section class="app" id="app"><div class="wrap">
+  <div class="app-head">
+    <div><h2 data-i="appTitle">Analyse a document</h2><p data-i="appSub">Works fully offline in demo mode. Add a free Gemini API key (see the key icon above) to get live, real analysis of your own documents.</p></div>
+  </div>
+
+  <div class="input-tabs">
+    <button class="itab active" id="it-sample" onclick="setInputMode('sample')" data-i="tabSample">Sample lease</button>
+    <button class="itab" id="it-paste" onclick="setInputMode('paste')" data-i="tabPaste">Paste text</button>
+    <button class="itab" id="it-upload" onclick="setInputMode('upload')" data-i="tabUpload">Upload PDF / TXT</button>
+  </div>
+
+  <div class="input-panel">
+    <div id="mode-sample">
+      <p style="font-size:13.5px;color:var(--ink-700);margin-bottom:10px;" data-i="sampleDesc">An 11-month residential lease from Pune — the kind that lands in most renters' inboxes with no explanation attached.</p>
+    </div>
+    <div id="mode-paste" hidden>
+      <textarea id="pasteArea" placeholder="Paste your agreement, offer letter, or policy text here…"></textarea>
+    </div>
+    <div id="mode-upload" hidden>
+      <div class="dropzone" id="dropzone">
+        <div data-i="dropText">Drag a .pdf or .txt file here, or</div>
+        <label class="filepick" data-i="browseText">browse a file<input type="file" id="fileInput" accept=".pdf,.txt"></label>
+      </div>
+    </div>
+    <div class="panel-actions">
+      <span class="hint" id="inputHint" data-i="hintSample">Sample document ready — click analyse.</span>
+      <button class="btn btn-primary" onclick="runAnalysis()" data-i="analyseBtn">Analyse document →</button>
+    </div>
+  </div>
+
+  <div class="workspace" id="workspace" hidden>
+    <div class="folder-tabs" id="folderTabs"></div>
+    <div class="panelbody" id="panelBody"></div>
+  </div>
+</div></section>
+
+<!-- ============ COST / FREE STACK ============ -->
+<section class="costs"><div class="wrap">
+  <h2 data-i="costTitle">What this actually costs to run</h2>
+  <p style="color:var(--ink-700);font-size:14.5px;margin-top:8px;max-width:70ch;" data-i="costSub">Every piece of this demo has a free tier that's generous enough for a hackathon, a pilot, or a small NGO's real usage. Nothing below required a credit card.</p>
+  <div class="cost-table-wrap"><table class="cost-table">
+    <thead><tr><th data-i="ch1">Piece</th><th data-i="ch2">Free option used here</th><th data-i="ch3">Free limit</th><th data-i="ch4">Cost to start</th></tr></thead>
+    <tbody>
+      <tr><td data-i="cr1a">AI model</td><td data-i="cr1b">Google Gemini 1.5 Flash API</td><td data-i="cr1c">~1,500 requests/day free tier</td><td><span class="cost-pill">₹0</span></td></tr>
+      <tr><td data-i="cr2a">Hosting</td><td data-i="cr2b">GitHub Pages / Netlify / Vercel / Cloudflare Pages</td><td data-i="cr2c">Unlimited static hosting on free plan</td><td><span class="cost-pill">₹0</span></td></tr>
+      <tr><td data-i="cr3a">PDF reading</td><td data-i="cr3b">pdf.js (runs in the browser)</td><td data-i="cr3c">No server, no limit</td><td><span class="cost-pill">₹0</span></td></tr>
+      <tr><td data-i="cr4a">Storage</td><td data-i="cr4b">Browser localStorage only</td><td data-i="cr4c">No database needed for MVP</td><td><span class="cost-pill">₹0</span></td></tr>
+      <tr><td data-i="cr5a">WhatsApp channel <em>(roadmap)</em></td><td data-i="cr5b">Meta WhatsApp Cloud API</td><td data-i="cr5c">1,000 free conversations/month</td><td><span class="cost-pill">₹0</span></td></tr>
+      <tr><td data-i="cr6a">Custom domain <em>(optional)</em></td><td data-i="cr6b">.pages.dev / .vercel.app / .github.io</td><td data-i="cr6c">Free forever; custom domain ~₹800–1,000/yr if wanted</td><td><span class="cost-pill">₹0*</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="total-line" data-i="totalLine"><b>Total to build and demo this: ₹0.</b> The only thing that ever costs money is scaling past free-tier request limits — and by then it's a funded pilot, not a hackathon project.</p>
+</div></section>
+
+<!-- ============ ROADMAP (the non-obvious part) ============ -->
+<section class="roadmap"><div class="wrap">
+  <span class="eyebrow">◆ <span data-i="roadEyebrow">Beyond the demo</span></span>
+  <h2 style="margin-top:14px;" data-i="roadTitle">The part that actually moves the needle</h2>
+  <p style="color:var(--ink-700);font-size:14.5px;margin-top:8px;max-width:72ch;" data-i="roadSub">Explaining a document is table stakes — every legal-AI demo does that. The features below are what turn "I understand my lease now" into "I got a better lease."</p>
+  <div class="road-grid">
+    <div class="road-card"><span class="tag">01</span><h4 data-i="rc1t">Negotiation script, not just a summary</h4><p data-i="rc1d">Most people who understand a bad clause still don't know how to push back. Spashta drafts the actual message — polite, specific, citing the clause — so the hardest part is just hitting send.</p></div>
+    <div class="road-card"><span class="tag">02</span><h4 data-i="rc2t">"Prep me for a lawyer" mode</h4><p data-i="rc2d">A one-page briefing — facts, red flags, exact questions to ask — cuts a ₹2,000–5,000 first consultation down to 15 focused minutes instead of 45 spent explaining the basics.</p></div>
+    <div class="road-card"><span class="tag">03</span><h4 data-i="rc3t">WhatsApp, not a website</h4><p data-i="rc3d">The people who most need this rarely start at a URL. A WhatsApp number you forward a photo of a document to meets them where they already are — free tier covers a real pilot.</p></div>
+  </div>
+</div></section>
+
+<!-- ============ FOOTER ============ -->
+<footer><div class="wrap">
+  <div class="disclaimer"><span>⚠</span><span><b data-i="discB">Not a lawyer.</b> <span data-i="discT">Spashta explains documents and drafts communications for you — it doesn't replace a licensed advocate, and nothing here is legal advice for your specific situation. For anything with real money or real risk attached, use the "Prep for a lawyer" output to get a proper consultation, faster.</span></span></div>
+  <div class="foot-row"><span data-i="footL">GenAI for Legal Access</span><span data-i="footR">Demo mode uses sample data. Bring your own free API key for live analysis.</span></div>
+</div></footer>
+
+<!-- ============ API KEY MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal">
+    <h3 data-i="modalTitle">Add a free Gemini API key</h3>
+    <p data-i="modalSub">Optional. Without a key, every panel below runs on realistic sample output so you can see the product working right now. With a key, the same panels call Gemini 1.5 Flash live on your own text.</p>
+    <input type="password" id="apiKeyInput" placeholder="AIza…" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="clearKey()" data-i="modalClear">Clear key</button>
+      <button class="btn btn-primary" onclick="saveKey()" data-i="modalSave">Save & close</button>
+    </div>
+    <div class="modal-note" data-i="modalNote">Stored only in this browser's localStorage — never sent anywhere but Google's API. Get a free key at aistudio.google.com/apikey. Note: live calls only work when this page is self-hosted (GitHub Pages, Netlify, etc.) — this hosted preview runs in a sandbox that blocks outbound API calls, so it will gracefully fall back to demo output here.</div>
+    <div class="modal-actions" style="justify-content:flex-start;margin-top:10px;">
+      <button class="btn btn-ghost" onclick="closeModal()" data-i="modalClose" style="padding:8px 14px;font-size:13px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+/* ================= i18n ================= */
+const STRINGS = {
+en:{
+  tag:"plain-language legal help", apiKeyBtn:"API key",
+  eyebrow:"GenAI for Legal Access",
+  heroSub:"Paste a lease, offer letter, or policy document. Spashta explains it in plain language, flags the clauses that work against you, and writes the email you send back — all before you spend a rupee on a lawyer.",
+  ctaPrimary:"Try the live demo ↓", ctaGhost:"Load sample lease",
+  stat1:"to run this demo", stat2:"clause risks it checks for", stat3:"languages, more on request",
+  previewLabel:"rental_agreement.pdf — risk scan",
+  high:"high risk", med:"medium risk", low:"looks fine",
+  pv1t:"Security deposit: 10 months' rent", pv1d:"Forfeited entirely if you leave before 11 months — unusually steep and rarely enforceable as-is.",
+  pv2t:"No repair-cost split", pv2d:"Tenant pays for \"all repairs\" with no line between wear-and-tear and structural damage.",
+  pv3t:"Notice period: 30 days", pv3d:"Standard and mutual — no changes needed here.",
+  how1t:"Bring the document", how1d:"Paste text, upload a PDF/TXT, or start from a sample lease — nothing leaves your browser except the AI call itself.",
+  how2t:"Spashta reads it like a document, not a search result", how2d:"It summarises, scores every clause for risk, and stays grounded in your document when you ask questions.",
+  how3t:"You get something to act on", how3d:"A negotiation email, a lawyer-ready briefing, or a side-by-side comparison — not just an explanation.",
+  appTitle:"Analyse a document", appSub:"Works fully offline in demo mode. Add a free Gemini API key (see the key icon above) to get live, real analysis of your own documents.",
+  tabSample:"Sample lease", tabPaste:"Paste text", tabUpload:"Upload PDF / TXT",
+  sampleDesc:"An 11-month residential lease from Pune — the kind that lands in most renters' inboxes with no explanation attached.",
+  dropText:"Drag a .pdf or .txt file here, or", browseText:"browse a file",
+  hintSample:"Sample document ready — click analyse.", hintPaste:"Paste your document, then click analyse.", hintUpload:"Choose a file, then click analyse.", hintReady:"File loaded — click analyse.",
+  analyseBtn:"Analyse document →",
+  costTitle:"What this actually costs to run",
+  costSub:"Every piece of this demo has a free tier that's generous enough for a hackathon, a pilot, or a small NGO's real usage. Nothing below required a credit card.",
+  ch1:"Piece", ch2:"Free option used here", ch3:"Free limit", ch4:"Cost to start",
+  cr1a:"AI model", cr1b:"Google Gemini 1.5 Flash API", cr1c:"~1,500 requests/day free tier",
+  cr2a:"Hosting", cr2b:"GitHub Pages / Netlify / Vercel / Cloudflare Pages", cr2c:"Unlimited static hosting on free plan",
+  cr3a:"PDF reading", cr3b:"pdf.js (runs in the browser)", cr3c:"No server, no limit",
+  cr4a:"Storage", cr4b:"Browser localStorage only", cr4c:"No database needed for MVP",
+  cr5a:"WhatsApp channel (roadmap)", cr5b:"Meta WhatsApp Cloud API", cr5c:"1,000 free conversations/month",
+  cr6a:"Custom domain (optional)", cr6b:".pages.dev / .vercel.app / .github.io", cr6c:"Free forever; custom domain ~₹800–1,000/yr if wanted",
+  totalLine:"Total to build and demo this: ₹0. The only thing that ever costs money is scaling past free-tier request limits — and by then it's a funded pilot, not a hackathon project.",
+  roadEyebrow:"Beyond the demo", roadTitle:"The part that actually moves the needle",
+  roadSub:"Explaining a document is table stakes — every legal-AI demo does that. The features below are what turn \"I understand my lease now\" into \"I got a better lease.\"",
+  rc1t:"Negotiation script, not just a summary", rc1d:"Most people who understand a bad clause still don't know how to push back. Spashta drafts the actual message — polite, specific, citing the clause — so the hardest part is just hitting send.",
+  rc2t:"“Prep me for a lawyer” mode", rc2d:"A one-page briefing — facts, red flags, exact questions to ask — cuts a ₹2,000–5,000 first consultation down to 15 focused minutes instead of 45 spent explaining the basics.",
+  rc3t:"WhatsApp, not a website", rc3d:"The people who most need this rarely start at a URL. A WhatsApp number you forward a photo of a document to meets them where they already are — free tier covers a real pilot.",
+  discB:"Not a lawyer.", discT:"Spashta explains documents and drafts communications for you — it doesn't replace a licensed advocate, and nothing here is legal advice for your specific situation. For anything with real money or real risk attached, use the \"Prep for a lawyer\" output to get a proper consultation, faster.",
+  footL:"GenAI for Legal Access", footR:"Demo mode uses sample data. Bring your own free API key for live analysis.",
+  modalTitle:"Add a free Gemini API key", modalSub:"Optional. Without a key, every panel below runs on realistic sample output so you can see the product working right now. With a key, the same panels call Gemini 1.5 Flash live on your own text.",
+  modalClear:"Clear key", modalSave:"Save & close", modalClose:"Close",
+  modalNote:"Stored only in this browser's localStorage — never sent anywhere but Google's API. Get a free key at aistudio.google.com/apikey. Note: live calls only work when this page is self-hosted (GitHub Pages, Netlify, etc.) — this hosted preview runs in a sandbox that blocks outbound API calls, so it will gracefully fall back to demo output here.",
+  tabs:{summary:"Summary",risks:"Risk flags",ask:"Ask questions",negotiate:"Negotiate",scenarios:"What if…?",compare:"Compare",lawyer:"Lawyer prep"},
+  demoNote:"Showing demo output — live AI needs a key and a self-hosted copy of this page (sandboxed previews block outbound calls). See the API-key panel for details.",
+  copy:"Copy", copied:"Copied ✓",
+  chatPlaceholder:"Ask about this document…", chatSend:"Ask",
+  fairnessScore:"fairness score",
+  scoreHigh:"Fairly standard — minor tweaks only", scoreMed:"Worth negotiating before you sign", scoreLow:"Handle with real caution",
+  exposureLine:"⚠️ Your worst-case exposure if you leave early: ", exposureDetail:"(₹2,80,000 deposit forfeited + ₹56,000 lock-in penalty)",
+  insightTitle:"Did you know?", insightBody:"Most Indian rental agreements run for exactly 11 months — one day short of a year — because a 12-month-or-longer agreement legally requires registration and stamp duty. This one is no exception.",
+  readAloud:"🔊 Read aloud", stopAloud:"⏸ Stop", voiceUnsupported:"Voice isn’t supported in this browser",
+  glossHint:"Tap any underlined word for a plain-English definition.",
+  scenarioTitle:"What if…?", scenarioSub:"Pick the real worry, get an answer grounded in this exact document.",
+  scenarioCustomPh:"Or describe your own situation…", scenarioAsk:"Get an answer →",
+  copyForLawyer:"Copy for a lawyer", copyForFriend:"Copy for a second opinion", preparingCopy:"Preparing…",
+  secondOpinionIntro:"Could I get your take on this document?", secondOpinionConcerns:"Biggest concerns:", secondOpinionSign:"(Made with Spashta)",
+},
+hi:{
+  tag:"सरल भाषा में कानूनी मदद", apiKeyBtn:"एपीआई कुंजी",
+  eyebrow:"कानूनी पहुँच के लिए जेनएआई",
+  heroSub:"किराया अनुबंध, नियुक्ति पत्र या पॉलिसी दस्तावेज़ पेस्ट करें। Spashta इसे सरल भाषा में समझाता है, आपके खिलाफ जाने वाली शर्तों को चिह्नित करता है, और वह ईमेल लिखता है जो आप वापस भेज सकते हैं — वकील पर एक रुपया खर्च करने से पहले।",
+  ctaPrimary:"लाइव डेमो आज़माएं ↓", ctaGhost:"नमूना अनुबंध लोड करें",
+  stat1:"इस डेमो को चलाने की लागत", stat2:"जाँची गई जोखिम शर्तें", stat3:"भाषाएं, अनुरोध पर और",
+  previewLabel:"rental_agreement.pdf — जोखिम जांच",
+  high:"उच्च जोखिम", med:"मध्यम जोखिम", low:"ठीक है",
+  pv1t:"सुरक्षा जमा: 10 महीने का किराया", pv1d:"11 महीने से पहले छोड़ने पर पूरी तरह ज़ब्त — असामान्य रूप से अधिक और लागू करना मुश्किल।",
+  pv2t:"मरम्मत लागत का बंटवारा नहीं", pv2d:"किरायेदार \"सभी मरम्मत\" के लिए भुगतान करता है, सामान्य टूट-फूट और संरचनात्मक नुकसान के बीच कोई रेखा नहीं।",
+  pv3t:"सूचना अवधि: 30 दिन", pv3d:"मानक और पारस्परिक — यहाँ कोई बदलाव ज़रूरी नहीं।",
+  how1t:"दस्तावेज़ लाएं", how1d:"टेक्स्ट पेस्ट करें, PDF/TXT अपलोड करें, या नमूना अनुबंध से शुरू करें — AI कॉल के अलावा कुछ भी आपके ब्राउज़र से बाहर नहीं जाता।",
+  how2t:"Spashta इसे दस्तावेज़ की तरह पढ़ता है, सर्च रिजल्ट की तरह नहीं", how2d:"यह सारांश देता है, हर शर्त को जोखिम के लिए जांचता है, और सवाल पूछने पर आपके दस्तावेज़ पर आधारित रहता है।",
+  how3t:"आपको कार्रवाई योग्य कुछ मिलता है", how3d:"एक बातचीत ईमेल, वकील के लिए तैयार जानकारी, या साथ-साथ तुलना — सिर्फ स्पष्टीकरण नहीं।",
+  appTitle:"एक दस्तावेज़ का विश्लेषण करें", appSub:"डेमो मोड में पूरी तरह ऑफ़लाइन काम करता है। अपने दस्तावेज़ों के लाइव विश्लेषण के लिए मुफ़्त Gemini API कुंजी जोड़ें।",
+  tabSample:"नमूना अनुबंध", tabPaste:"टेक्स्ट पेस्ट करें", tabUpload:"PDF / TXT अपलोड करें",
+  sampleDesc:"पुणे से एक 11-महीने का आवासीय किराया अनुबंध — वह तरह जो बिना किसी स्पष्टीकरण के ज़्यादातर किरायेदारों के इनबॉक्स में आती है।",
+  dropText:"यहाँ .pdf या .txt फ़ाइल खींचें, या", browseText:"फ़ाइल चुनें",
+  hintSample:"नमूना दस्तावेज़ तैयार है — विश्लेषण पर क्लिक करें।", hintPaste:"अपना दस्तावेज़ पेस्ट करें, फिर विश्लेषण पर क्लिक करें।", hintUpload:"एक फ़ाइल चुनें, फिर विश्लेषण पर क्लिक करें।", hintReady:"फ़ाइल लोड हो गई — विश्लेषण पर क्लिक करें।",
+  analyseBtn:"दस्तावेज़ का विश्लेषण करें →",
+  costTitle:"इसे चलाने की वास्तविक लागत",
+  costSub:"इस डेमो के हर हिस्से में एक मुफ़्त स्तर है जो हैकथॉन, पायलट या छोटे एनजीओ के वास्तविक उपयोग के लिए पर्याप्त है। नीचे किसी के लिए क्रेडिट कार्ड की ज़रूरत नहीं थी।",
+  ch1:"हिस्सा", ch2:"यहाँ इस्तेमाल किया गया मुफ़्त विकल्प", ch3:"मुफ़्त सीमा", ch4:"शुरू करने की लागत",
+  cr1a:"AI मॉडल", cr1b:"Google Gemini 1.5 Flash API", cr1c:"~1,500 अनुरोध/दिन मुफ़्त",
+  cr2a:"होस्टिंग", cr2b:"GitHub Pages / Netlify / Vercel / Cloudflare Pages", cr2c:"मुफ़्त प्लान पर असीमित स्टैटिक होस्टिंग",
+  cr3a:"PDF पढ़ना", cr3b:"pdf.js (ब्राउज़र में चलता है)", cr3c:"कोई सर्वर नहीं, कोई सीमा नहीं",
+  cr4a:"स्टोरेज", cr4b:"सिर्फ़ ब्राउज़र localStorage", cr4c:"MVP के लिए डेटाबेस ज़रूरी नहीं",
+  cr5a:"WhatsApp चैनल (आगामी)", cr5b:"Meta WhatsApp Cloud API", cr5c:"1,000 मुफ़्त बातचीत/माह",
+  cr6a:"कस्टम डोमेन (वैकल्पिक)", cr6b:".pages.dev / .vercel.app / .github.io", cr6c:"हमेशा मुफ़्त; कस्टम डोमेन चाहें तो ~₹800–1,000/वर्ष",
+  totalLine:"इसे बनाने और डेमो करने की कुल लागत: ₹0। पैसा तभी लगता है जब मुफ़्त सीमा पार हो — और तब तक यह फंडेड पायलट बन चुका होता है, हैकथॉन प्रोजेक्ट नहीं।",
+  roadEyebrow:"डेमो से आगे", roadTitle:"वह हिस्सा जो असल फ़र्क़ लाता है",
+  roadSub:"दस्तावेज़ समझाना तो हर लीगल-AI डेमो करता है। नीचे दी गई सुविधाएं \"अब मुझे अनुबंध समझ आया\" को \"मुझे बेहतर अनुबंध मिला\" में बदलती हैं।",
+  rc1t:"सिर्फ़ सारांश नहीं, बातचीत की स्क्रिप्ट", rc1d:"ख़राब शर्त समझने वाले ज़्यादातर लोग भी नहीं जानते कि कैसे इनकार करें। Spashta असली संदेश लिखता है — विनम्र, स्पष्ट, शर्त का हवाला देते हुए।",
+  rc2t:"“वकील के लिए तैयारी” मोड", rc2d:"एक-पेज की जानकारी — तथ्य, चेतावनियाँ, सटीक सवाल — ₹2,000–5,000 की पहली सलाह को 45 मिनट के बजाय 15 केंद्रित मिनट में बदल देती है।",
+  rc3t:"वेबसाइट नहीं, WhatsApp", rc3d:"जिन्हें इसकी सबसे ज़्यादा ज़रूरत है वे शायद ही किसी URL से शुरू करते हैं। एक WhatsApp नंबर जहाँ आप दस्तावेज़ की फ़ोटो भेज सकें।",
+  discB:"यह वकील नहीं है।", discT:"Spashta दस्तावेज़ समझाता है और संचार का मसौदा तैयार करता है — यह लाइसेंस प्राप्त वकील की जगह नहीं लेता। असली पैसे या जोखिम वाले मामलों के लिए \"वकील के लिए तैयारी\" आउटपुट का उपयोग करें।",
+  footL:"कानूनी पहुँच के लिए जेनएआई", footR:"डेमो मोड नमूना डेटा का उपयोग करता है। लाइव विश्लेषण के लिए अपनी मुफ़्त API कुंजी लाएं।",
+  modalTitle:"मुफ़्त Gemini API कुंजी जोड़ें", modalSub:"वैकल्पिक। कुंजी के बिना, हर पैनल यथार्थवादी नमूना आउटपुट पर चलता है। कुंजी के साथ, वही पैनल आपके अपने टेक्स्ट पर लाइव Gemini कॉल करते हैं।",
+  modalClear:"कुंजी हटाएं", modalSave:"सेव करें", modalClose:"बंद करें",
+  modalNote:"केवल इस ब्राउज़र के localStorage में संग्रहीत — Google के API के अलावा कहीं नहीं भेजा जाता। मुफ़्त कुंजी aistudio.google.com/apikey पर लें। नोट: लाइव कॉल तभी काम करती हैं जब यह पेज खुद होस्ट किया गया हो।",
+  tabs:{summary:"सारांश",risks:"जोखिम",ask:"सवाल पूछें",negotiate:"बातचीत",scenarios:"अगर ऐसा हो...?",compare:"तुलना",lawyer:"वकील तैयारी"},
+  demoNote:"नमूना आउटपुट दिखाया जा रहा है — लाइव AI के लिए कुंजी और स्वयं-होस्टेड पेज चाहिए।",
+  copy:"कॉपी करें", copied:"कॉपी हो गया ✓",
+  chatPlaceholder:"इस दस्तावेज़ के बारे में पूछें…", chatSend:"पूछें",
+  fairnessScore:"निष्पक्षता स्कोर",
+  scoreHigh:"काफ़ी मानक — मामूली बदलाव ही काफ़ी", scoreMed:"हस्ताक्षर से पहले बातचीत ज़रूरी", scoreLow:"सावधानी से संभालें",
+  exposureLine:"⚠️ जल्दी छोड़ने पर अधिकतम नुकसान: ", exposureDetail:"(₹2,80,000 जमा राशि + ₹56,000 लॉक-इन जुर्माना)",
+  insightTitle:"क्या आप जानते हैं?", insightBody:"ज़्यादातर भारतीय किराया अनुबंध ठीक 11 महीने के होते हैं — एक साल से एक दिन कम — क्योंकि 12 महीने या उससे लंबे अनुबंध के लिए पंजीकरण और स्टाम्प ड्यूटी ज़रूरी होती है। यह भी उसी तरह है।",
+  readAloud:"🔊 सुनें", stopAloud:"⏸ रोकें", voiceUnsupported:"इस ब्राउज़र में आवाज़ समर्थित नहीं है",
+  glossHint:"किसी भी रेखांकित शब्द पर टैप करें — सरल अर्थ जानने के लिए।",
+  scenarioTitle:"अगर ऐसा हो...?", scenarioSub:"अपनी असल चिंता चुनें, दस्तावेज़ पर आधारित सटीक जवाब पाएं।",
+  scenarioCustomPh:"या अपनी स्थिति खुद लिखें…", scenarioAsk:"जवाब पाएं →",
+  copyForLawyer:"वकील के लिए कॉपी करें", copyForFriend:"दोस्त/परिवार के लिए कॉपी करें", preparingCopy:"तैयार हो रहा है…",
+  secondOpinionIntro:"मुझे इस दस्तावेज़ पर आपकी राय चाहिए:", secondOpinionConcerns:"सबसे बड़ी चिंताएं:", secondOpinionSign:"(Spashta से बना)",
+}
+};
+let lang = 'en';
+function t(k){ return STRINGS[lang][k] ?? STRINGS.en[k] ?? k; }
+function applyI18n(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i]').forEach(el=>{ const k=el.getAttribute('data-i'); if(STRINGS[lang][k]!==undefined) el.textContent = t(k); });
+  document.getElementById('langEn').classList.toggle('active', lang==='en');
+  document.getElementById('langHi').classList.toggle('active', lang==='hi');
+  document.body.classList.toggle('lang-hi', lang==='hi');
+  document.getElementById('apiKeyInput').placeholder = 'AIza…';
+  const hintEl = document.getElementById('inputHint');
+  if(hintEl && hintEl.dataset.state) hintEl.textContent = t(hintEl.dataset.state);
+  if(state.doc && !state.loading){ buildFolderTabs(); renderActivePanel(); }
+}
+function setLang(l){ stopSpeaking(); lang=l; try{localStorage.setItem('spashta_lang',l);}catch(e){} applyI18n(); }
+
+/* ================= SAMPLE DATA ================= */
+const SAMPLE_LEASE = `RESIDENTIAL LEASE AGREEMENT
+This agreement is made between Mr. R. Deshpande ("Landlord") and the Tenant, for the flat at Flat 4B, Sunrise Apartments, Baner, Pune, for a period of 11 months from the date below.
+
+Clause 1 — Security Deposit: The Tenant shall pay a refundable security deposit equal to ten (10) months' rent at the start of the tenancy. This deposit shall be fully forfeited to the Landlord if the Tenant vacates the premises before completing the full 11-month term for any reason.
+
+Clause 2 — Rent and Escalation: Monthly rent is ₹28,000, payable by the 5th of each month. Upon renewal, rent shall increase by an amount to be decided solely by the Landlord.
+
+Clause 3 — Lock-in Period: The Tenant is bound by a lock-in period of 6 months. Breaking the lock-in requires payment of 2 months' rent as penalty in addition to forfeiting the deposit under Clause 1.
+
+Clause 4 — Maintenance: The Tenant shall bear all maintenance charges as applicable, to be communicated by the Landlord from time to time.
+
+Clause 5 — Repairs: The Tenant shall be responsible for all repairs to the premises during the tenancy, including structural and electrical repairs, regardless of cause.
+
+Clause 6 — Landlord Access: The Landlord or his representative may enter the premises at any time for inspection without prior notice to the Tenant.
+
+Clause 7 — Renewal: This agreement shall automatically renew for a further 11 months unless either party gives notice, with revised terms at the Landlord's sole discretion.
+
+Clause 8 — Notice Period: Either party may terminate this agreement after the lock-in period by giving 30 days' written notice.`;
+
+const SAMPLE_SUMMARY = {
+en:`This is an 11-month residential lease for a flat in Baner, Pune, at ₹28,000/month.
+
+In plain terms: you pay a 10-month deposit upfront, agree to a 6-month lock-in, and take on maintenance and repair costs — including structural repairs — that a lease this size wouldn't normally push onto a tenant. The landlord can also enter without notice and set your renewal rent unilaterally.
+
+None of this is unusual for Pune's rental market, but three clauses (1, 5, and 6) are worth pushing back on before you sign — see the Risk flags tab for specifics, and Negotiate for ready-to-send wording.`,
+hi:`यह पुणे के बानेर में एक फ्लैट के लिए ₹28,000/माह का 11-महीने का आवासीय किराया अनुबंध है।
+
+सीधी भाषा में: आप पहले से 10 महीने की जमा राशि देते हैं, 6-महीने के लॉक-इन के लिए सहमत होते हैं, और मरम्मत का खर्च — संरचनात्मक मरम्मत सहित — उठाते हैं, जो आमतौर पर किरायेदार पर नहीं डाला जाता। मकान मालिक बिना सूचना के भी अंदर आ सकता है और नवीनीकरण पर किराया खुद तय कर सकता है।
+
+पुणे के किराया बाज़ार में यह असामान्य नहीं है, लेकिन तीन शर्तें (1, 5, और 6) पर हस्ताक्षर करने से पहले बात करनी चाहिए — विवरण के लिए "जोखिम" टैब देखें, और तैयार शब्दों के लिए "बातचीत" टैब देखें।`
+};
+
+const SAMPLE_RISKS = [
+  {clause:"Clause 1", risk:"high",
+   excerpt:"...fully forfeited to the Landlord if the Tenant vacates the premises before completing the full 11-month term for any reason.",
+   en_explain:"A 10-month deposit is already double the usual 2–3 months. Losing all of it for leaving early — even for a valid reason like a job relocation — is unusually harsh and goes beyond what most state rent rules treat as enforceable.",
+   en_fix:"Ask for the deposit to reduce to 2–3 months' rent, or add a clause that only a pro-rated portion is forfeited based on months remaining.",
+   hi_explain:"10 महीने की जमा राशि सामान्य 2–3 महीनों से दोगुनी है। किसी वैध कारण से भी जल्दी छोड़ने पर पूरी राशि खोना असामान्य रूप से कठोर है।",
+   hi_fix:"जमा राशि को 2–3 महीने के किराए तक घटाने के लिए कहें, या बचे महीनों के अनुपात में ही ज़ब्ती की शर्त जोड़ें।"},
+  {clause:"Clause 5", risk:"high",
+   excerpt:"...responsible for all repairs to the premises during the tenancy, including structural and electrical repairs, regardless of cause.",
+   en_explain:"Structural and major electrical repairs are conventionally the landlord's responsibility — this clause shifts that cost onto you even when the damage isn't your fault.",
+   en_fix:"Propose splitting repairs: tenant covers minor/wear-and-tear items under a fixed amount (e.g. ₹2,000), landlord covers structural, plumbing, and electrical faults not caused by tenant negligence.",
+   hi_explain:"संरचनात्मक और बड़ी बिजली मरम्मत आमतौर पर मकान मालिक की ज़िम्मेदारी होती है — यह शर्त वह खर्च आप पर डालती है, भले ही नुकसान आपकी गलती न हो।",
+   hi_fix:"मरम्मत को बाँटने का प्रस्ताव दें: किरायेदार छोटी मरम्मत (जैसे ₹2,000 तक) उठाए, मकान मालिक संरचनात्मक और बिजली की खराबी।"},
+  {clause:"Clause 6", risk:"med",
+   excerpt:"...may enter the premises at any time for inspection without prior notice to the Tenant.",
+   en_explain:"No-notice entry removes your basic privacy and is one of the most commonly disputed clauses in Indian rental agreements.",
+   en_fix:"Request a standard 24-hour written or verbal notice requirement, except in genuine emergencies.",
+   hi_explain:"बिना सूचना के प्रवेश आपकी बुनियादी निजता छीनता है और यह भारतीय किराया अनुबंधों में सबसे विवादित शर्तों में से एक है।",
+   hi_fix:"आपातकाल को छोड़कर, 24 घंटे की लिखित या मौखिक सूचना की शर्त जोड़ने का अनुरोध करें।"},
+  {clause:"Clause 2 & 7", risk:"med",
+   excerpt:"...rent shall increase by an amount to be decided solely by the Landlord.",
+   en_explain:"An open-ended, landlord-only rent escalation gives you no predictability for renewal — you could be priced out with no negotiation.",
+   en_fix:"Ask for a capped escalation, e.g. \"maximum 8% per renewal,\" a common and reasonable benchmark.",
+   hi_explain:"बिना किसी सीमा के, केवल मकान मालिक द्वारा तय किराया वृद्धि नवीनीकरण पर कोई पूर्वानुमेयता नहीं देती।",
+   hi_fix:"एक सीमित वृद्धि माँगें, जैसे \"प्रति नवीनीकरण अधिकतम 8%\"।"},
+  {clause:"Clause 3", risk:"low",
+   excerpt:"...lock-in period of 6 months. Breaking the lock-in requires payment of 2 months' rent as penalty...",
+   en_explain:"A 6-month lock-in with a 2-month penalty is within normal range for Pune leases — not ideal, but not unusual enough to flag as high-risk.",
+   en_fix:"Optional: negotiate the penalty down to 1 month if you expect you might need to move early.",
+   hi_explain:"2-महीने के जुर्माने के साथ 6-महीने का लॉक-इन पुणे के अनुबंधों में सामान्य सीमा के भीतर है।",
+   hi_fix:"वैकल्पिक: यदि जल्दी जाने की संभावना है तो जुर्माना 1 महीने तक कम करने पर बातचीत करें।"},
+  {clause:"Clause 8", risk:"low",
+   excerpt:"Either party may terminate this agreement after the lock-in period by giving 30 days' written notice.",
+   en_explain:"Mutual, standard, and fair — no change needed.",
+   en_fix:"None needed.",
+   hi_explain:"पारस्परिक, मानक और उचित — कोई बदलाव ज़रूरी नहीं।",
+   hi_fix:"कोई ज़रूरत नहीं।"}
+];
+
+const SAMPLE_SCRIPT = {
+en:`Subject: A few small changes before I sign — [Flat 4B, Sunrise Apartments]
+
+Hi Mr. Deshpande,
+
+Thank you for sharing the lease — I'm keen to move ahead. Before signing, I'd like to request three small adjustments:
+
+1. Security deposit (Clause 1): Could we bring this down to 3 months' rent (₹84,000) instead of 10? I'm also comfortable with a clause that returns a pro-rated portion of the deposit if I need to leave before 11 months for a genuine reason like work relocation.
+
+2. Repairs (Clause 5): I'd like to split repair responsibility — I'll happily cover minor wear-and-tear up to ₹2,000, but structural, plumbing, and electrical repairs not caused by me should be on the landlord's side, as is standard.
+
+3. Entry notice (Clause 6): Could we add a simple 24-hour notice before any inspection visit, except in emergencies? Happy to coordinate timing that works for both of us.
+
+Everything else in the agreement looks good to me. Let me know if we can align on these, and I can sign right away.
+
+Thanks so much,
+[Your name]`,
+hi:`विषय: हस्ताक्षर से पहले कुछ छोटे बदलाव — [Flat 4B, Sunrise Apartments]
+
+नमस्ते देशपांडे जी,
+
+अनुबंध साझा करने के लिए धन्यवाद — मैं आगे बढ़ने के लिए उत्सुक हूं। हस्ताक्षर से पहले, मैं तीन छोटे बदलावों का अनुरोध करना चाहूंगा/चाहूंगी:
+
+1. सुरक्षा जमा (शर्त 1): क्या हम इसे 10 महीने की बजाय 3 महीने के किराए (₹84,000) तक ला सकते हैं? मैं इस शर्त से भी सहज हूं कि अगर मुझे किसी वास्तविक कारण से 11 महीने से पहले जाना पड़े तो जमा राशि का अनुपातिक हिस्सा वापस मिले।
+
+2. मरम्मत (शर्त 5): मैं मरम्मत की ज़िम्मेदारी बाँटना चाहूंगा/चाहूंगी — मैं ₹2,000 तक की छोटी टूट-फूट खुशी से उठाऊंगा/उठाऊंगी, लेकिन संरचनात्मक, प्लंबिंग और बिजली की मरम्मत, जो मेरी वजह से न हो, मकान मालिक के पक्ष में होनी चाहिए।
+
+3. प्रवेश सूचना (शर्त 6): क्या हम किसी भी निरीक्षण से पहले 24 घंटे की सूचना जोड़ सकते हैं, आपातकाल को छोड़कर?
+
+बाकी सब अनुबंध में मुझे ठीक लगता है। बताइए अगर हम इन पर सहमत हो सकते हैं, तो मैं तुरंत हस्ताक्षर कर सकता/सकती हूं।
+
+धन्यवाद,
+[आपका नाम]`
+};
+
+const SAMPLE_BRIEF = {
+en:{
+  facts:["Document type: 11-month residential lease (Pune)","Monthly rent: ₹28,000 · Deposit: ₹2,80,000 (10 months)","Lock-in: 6 months, 2-month penalty to break it","Parties: Landlord Mr. R. Deshpande and Tenant"],
+  flags:["Clause 1 — full deposit forfeiture on early exit, even for genuine reasons","Clause 5 — tenant liable for structural/electrical repairs, not just wear-and-tear","Clause 6 — landlord can enter with zero notice"],
+  questions:["Is a 10-month deposit and full forfeiture clause enforceable under Maharashtra's rent regulations?","What's a realistic negotiated range for deposit and repair-cost split in this market?","Should the automatic-renewal clause (7) be capped or removed entirely before signing?"]
+},
+hi:{
+  facts:["दस्तावेज़ प्रकार: 11-महीने का आवासीय किराया अनुबंध (पुणे)","मासिक किराया: ₹28,000 · जमा: ₹2,80,000 (10 महीने)","लॉक-इन: 6 महीने, तोड़ने पर 2-महीने का जुर्माना","पक्ष: मकान मालिक श्री आर. देशपांडे और किरायेदार"],
+  flags:["शर्त 1 — जल्दी जाने पर पूरी जमा राशि ज़ब्त, वास्तविक कारण होने पर भी","शर्त 5 — किरायेदार संरचनात्मक/बिजली मरम्मत के लिए ज़िम्मेदार","शर्त 6 — मकान मालिक बिना किसी सूचना के प्रवेश कर सकता है"],
+  questions:["क्या महाराष्ट्र के किराया नियमों के तहत 10-महीने की जमा और पूर्ण ज़ब्ती शर्त लागू करने योग्य है?","इस बाज़ार में जमा और मरम्मत लागत बंटवारे के लिए एक यथार्थवादी सीमा क्या है?","क्या हस्ताक्षर से पहले स्वचालित-नवीनीकरण शर्त (7) को सीमित या हटाया जाना चाहिए?"]
+}};
+
+const SAMPLE_COMPARE = {
+en:{ left_title:"Offer A — TechNova Pvt Ltd", right_title:"Offer B — Bluepeak Systems",
+  rows:[
+    {label:"Notice period", a:"90 days", b:"30 days", better:"b"},
+    {label:"Non-compete", a:"12 months, pan-India", b:"6 months, same city only", better:"b"},
+    {label:"Signing bonus clawback", a:"100% if you leave within 2 yrs", b:"Pro-rated, none after year 1", better:"b"},
+    {label:"Notice-period buyout", a:"Not allowed", b:"Allowed, pay in lieu", better:"b"},
+    {label:"Base CTC", a:"₹12,00,000", b:"₹11,40,000", better:"a"}
+  ],
+  verdict:"Offer B is the meaningfully safer contract even at slightly lower pay — its non-compete and clawback terms are far less restrictive, and it gives you an actual exit option. Offer A's 90-day, pan-India non-compete is the kind of clause worth negotiating on before accepting, not after."
+},
+hi:{ left_title:"ऑफ़र A — TechNova Pvt Ltd", right_title:"ऑफ़र B — Bluepeak Systems",
+  rows:[
+    {label:"सूचना अवधि", a:"90 दिन", b:"30 दिन", better:"b"},
+    {label:"गैर-प्रतिस्पर्धा", a:"12 महीने, पूरे भारत में", b:"6 महीने, केवल उसी शहर में", better:"b"},
+    {label:"साइनिंग बोनस वापसी", a:"2 साल के भीतर छोड़ने पर 100%", b:"अनुपातिक, 1 साल बाद कुछ नहीं", better:"b"},
+    {label:"नोटिस-अवधि बायआउट", a:"अनुमति नहीं", b:"अनुमति, भुगतान करके", better:"b"},
+    {label:"आधार CTC", a:"₹12,00,000", b:"₹11,40,000", better:"a"}
+  ],
+  verdict:"ऑफ़र B थोड़ा कम वेतन होने पर भी काफ़ी सुरक्षित अनुबंध है — इसकी गैर-प्रतिस्पर्धा और वापसी शर्तें कम प्रतिबंधात्मक हैं। ऑफ़र A की 90-दिन, पूरे भारत में गैर-प्रतिस्पर्धा शर्त स्वीकार करने से पहले ही बातचीत के लायक है।"
+}};
+
+const CHAT_QA = [
+  {k:["deposit","जमा"], en:"Your deposit is 10 months' rent (₹2,80,000) — roughly 3–5x what's typical in Pune. Worse, Clause 1 forfeits all of it if you leave before 11 months, even for a valid reason. This is the single clause most worth negotiating — see the Negotiate tab for wording.", hi:"आपकी जमा राशि 10 महीने का किराया (₹2,80,000) है — पुणे में सामान्य से लगभग 3–5 गुना। इससे भी बुरा, शर्त 1 के अनुसार 11 महीने से पहले जाने पर यह पूरी ज़ब्त हो जाती है।"},
+  {k:["repair","मरम्मत"], en:"Clause 5 puts you on the hook for all repairs, including structural and electrical — that's broader than normal. Typically a landlord covers structural/major repairs while the tenant covers small wear-and-tear.", hi:"शर्त 5 के अनुसार सभी मरम्मत, जिसमें संरचनात्मक और बिजली भी शामिल है, आप पर है — यह सामान्य से अधिक है।"},
+  {k:["leave early","early exit","break lease","जल्दी","छोड़"], en:"You can leave after the 6-month lock-in with 30 days' notice (Clause 8), but breaking the lock-in itself costs 2 months' rent as penalty PLUS forfeits your entire 10-month deposit under Clause 1. That combination is the real risk.", hi:"आप 6-महीने के लॉक-इन के बाद 30 दिन की सूचना देकर जा सकते हैं (शर्त 8), लेकिन लॉक-इन तोड़ने पर 2 महीने का जुर्माना और पूरी जमा राशि की ज़ब्ती दोनों होती है।"},
+  {k:["entry","enter","privacy","प्रवेश"], en:"Clause 6 lets the landlord enter anytime without notice — no privacy protection at all. It's flagged as medium risk; ask for a 24-hour notice requirement.", hi:"शर्त 6 मकान मालिक को बिना किसी सूचना के कभी भी प्रवेश की अनुमति देती है — कोई निजता सुरक्षा नहीं।"},
+  {k:["rent increase","escalation","renew","किराया बढ़"], en:"Clause 2 and 7 together mean the landlord can raise your rent by any amount at renewal, with no cap. Ask for an explicit cap, like 8% per renewal, which is a common benchmark.", hi:"शर्त 2 और 7 मिलकर मकान मालिक को नवीनीकरण पर बिना किसी सीमा के किराया बढ़ाने देती हैं। 8% जैसी स्पष्ट सीमा माँगें।"}
+];
+
+/* ================= JARGON GLOSSARY ================= */
+const GLOSSARY = {
+en:{
+  "security deposit":"Money paid upfront to protect the other party against damage or unpaid dues — meant to be refundable.",
+  "lock-in period":"A minimum time you're bound to the agreement; leaving earlier usually triggers a penalty.",
+  "lock-in":"A minimum time you're bound to the agreement; leaving earlier usually triggers a penalty.",
+  "indemnify":"To compensate someone for a loss — agreeing to \"indemnify\" means you cover their costs if something goes wrong.",
+  "force majeure":"A clause excusing a party from obligations because of extraordinary events outside their control, like natural disasters.",
+  "non-compete":"A restriction stopping you from working for a competitor for a set time after leaving.",
+  "notice period":"How much advance warning either side must give before ending the agreement.",
+  "clawback":"A right for the other party to take back money already paid to you, under certain conditions.",
+  "forfeited":"Permanently lost, not returned to you.",
+  "escalation":"An automatic or agreed increase, usually in rent or cost, at renewal.",
+  "sole discretion":"A decision made entirely by one party, with no input or approval needed from you.",
+  "structural repairs":"Fixes to a building's core structure — walls, roof, foundation — as opposed to everyday wear and tear.",
+},
+hi:{
+  "सुरक्षा जमा":"मकान मालिक को नुकसान या बकाया से बचाने के लिए पहले से दी गई राशि — यह वापसी योग्य होती है।",
+  "लॉक-इन":"वह न्यूनतम अवधि जिसके लिए आप अनुबंध से बंधे हैं; जल्दी छोड़ने पर आमतौर पर जुर्माना लगता है।",
+  "ज़ब्त":"स्थायी रूप से खोई हुई राशि — यह आपको वापस नहीं मिलती।",
+  "सूचना अवधि":"अनुबंध समाप्त करने से पहले दोनों पक्षों को कितनी पहले से जानकारी देनी होगी।",
+  "सोल डिस्क्रिशन":"पूरी तरह से एक पक्ष द्वारा लिया गया निर्णय — इसमें आपकी सहमति ज़रूरी नहीं।",
+  "संरचनात्मक मरम्मत":"इमारत की मूल संरचना — दीवारें, छत, नींव — की मरम्मत, सामान्य टूट-फूट से अलग।",
+}
+};
+function highlightGlossary(text, glossLang){
+  const gl = glossLang || lang;
+  const dict = GLOSSARY[gl] || {};
+  const terms = Object.keys(dict).sort((a,b)=>b.length-a.length);
+  if(!terms.length) return text;
+  const esc = s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const pattern = new RegExp('('+terms.map(esc).join('|')+')', gl==='hi' ? 'g' : 'gi');
+  return text.replace(pattern, m=>{
+    const key = gl==='hi' ? m : m.toLowerCase();
+    if(!dict[key]) return m;
+    return `<button type="button" class="gloss" onclick='showGloss(${JSON.stringify(key)},${JSON.stringify(gl)})'>${m}</button>`;
+  });
+}
+function showGloss(key, glossLang){
+  const dict = GLOSSARY[glossLang || lang] || {};
+  const def = dict[key];
+  if(def) showToast('📖 '+def, 4200);
+}
+
+/* ================= SCENARIO SIMULATOR ================= */
+const SCENARIOS = [
+  {id:'job',
+   en_q:"I might need to relocate for work in 3 months", hi_q:"मुझे 3 महीने में नौकरी के लिए शिफ्ट होना पड़ सकता है",
+   en_a:"You're inside the 6-month lock-in (Clause 3), so leaving now triggers a 2-month penalty (₹56,000) plus full deposit forfeiture (₹2,80,000) under Clause 1 — ₹3,36,000 total. Before accepting that: check if your employer offers a relocation clause you can invoke, ask the landlord in writing for a pro-rated deposit return given a genuine reason, and see the Negotiate tab — Clause 1 is exactly what that draft addresses.",
+   hi_a:"आप 6-महीने के लॉक-इन (शर्त 3) के भीतर हैं, इसलिए अभी छोड़ने पर 2-महीने का जुर्माना (₹56,000) और पूरी जमा राशि (₹2,80,000) — कुल ₹3,36,000 — का नुकसान होगा। स्वीकार करने से पहले: देखें कि क्या नियोक्ता स्थानांतरण सहायता देता है, मकान मालिक से लिखित में अनुपातिक वापसी माँगें, और 'बातचीत' टैब देखें — शर्त 1 यही संबोधित करती है।"},
+  {id:'deposit',
+   en_q:"The landlord isn't returning my deposit after I moved out", hi_q:"मकान मालिक बाहर निकलने के बाद जमा राशि वापस नहीं कर रहा",
+   en_a:"This lease has no clause specifying a deposit-return timeline — that gap is worth knowing on its own. Send a written demand (email or WhatsApp text, keep a copy) citing your move-out date and asking for the deposit back within 14 days. If it's ignored, rent courts and consumer forums handle deposit disputes — use the Lawyer prep tab to get a briefing ready before that step.",
+   hi_a:"इस अनुबंध में जमा वापसी की समय-सीमा तय नहीं है — यह खुद एक कमी है। लिखित में (ईमेल/व्हाट्सएप, कॉपी रखें) मांग भेजें कि 14 दिनों में राशि लौटाई जाए। अनदेखी होने पर लघु-वाद न्यायालय या उपभोक्ता फोरम में शिकायत की जा सकती है — 'वकील तैयारी' टैब का उपयोग करें।"},
+  {id:'damage',
+   en_q:"Something breaks and I don't know who pays", hi_q:"कुछ टूट जाए तो पता नहीं किसे भुगतान करना है",
+   en_a:"Clause 5 currently puts every repair on you, structural and electrical included — that's exactly why it's flagged high-risk. Until it's renegotiated: photograph any pre-existing damage with a timestamp on move-in day, and keep every repair receipt — you'll need both if the landlord disputes what was already broken versus what you caused.",
+   hi_a:"शर्त 5 फ़िलहाल हर मरम्मत — संरचनात्मक और बिजली सहित — आप पर डालती है। जब तक इसे फिर से तय न किया जाए: चलने के दिन तारीख-सहित फ़ोटो लें और हर मरम्मत की रसीद रखें।"},
+  {id:'entry',
+   en_q:"The landlord keeps showing up unannounced", hi_q:"मकान मालिक बिना बताए आता रहता है",
+   en_a:"Clause 6 technically allows this — it's flagged medium-risk for exactly this reason. Ask in writing (a polite WhatsApp message works) for 24-hour notice going forward; most landlords agree once it's raised directly, since giving notice costs them nothing. If it continues after you've asked, keep a dated log — it strengthens your position in the Lawyer prep briefing.",
+   hi_a:"शर्त 6 तकनीकी रूप से इसकी अनुमति देती है — इसीलिए इसे मध्यम-जोखिम चिह्नित किया गया है। लिखित में (व्हाट्सएप संदेश) 24-घंटे की सूचना माँगें — ज़्यादातर मकान मालिक सीधे कहने पर मान जाते हैं। अनदेखी होने पर तारीख-सहित रिकॉर्ड रखें।"}
+];
+
+/* ================= STATE ================= */
+const state = { doc:null, inputMode:'sample', activeTab:'summary', loading:false, cache:{}, chat:[], apiKey:'', compareLoaded:false };
+try{ state.apiKey = localStorage.getItem('spashta_key') || ''; }catch(e){}
+try{ const savedLang = localStorage.getItem('spashta_lang'); if(savedLang) lang = savedLang; }catch(e){}
+
+/* ================= UI: modal ================= */
+function openModal(){ document.getElementById('modalOverlay').hidden=false; document.getElementById('apiKeyInput').value = state.apiKey; }
+function closeModal(){ document.getElementById('modalOverlay').hidden=true; }
+function saveKey(){ const v = document.getElementById('apiKeyInput').value.trim(); state.apiKey=v; try{localStorage.setItem('spashta_key',v);}catch(e){} document.getElementById('keyBtn').classList.toggle('active', !!v); closeModal(); showToast(v? (lang==='hi'?'कुंजी सेव हो गई':'Key saved') : (lang==='hi'?'कुंजी हटा दी गई':'Key cleared')); }
+function clearKey(){ document.getElementById('apiKeyInput').value=''; state.apiKey=''; try{localStorage.removeItem('spashta_key');}catch(e){} document.getElementById('keyBtn').classList.remove('active'); }
+if(state.apiKey) document.addEventListener('DOMContentLoaded', ()=>document.getElementById('keyBtn').classList.add('active'));
+
+function showToast(msg, duration){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>el.classList.remove('show'), duration||2600); }
+
+/* ================= UI: input mode ================= */
+function setInputMode(mode){
+  state.inputMode = mode;
+  ['sample','paste','upload'].forEach(m=>{
+    document.getElementById('it-'+m).classList.toggle('active', m===mode);
+    document.getElementById('mode-'+m).hidden = m!==mode;
+  });
+  const hint = document.getElementById('inputHint');
+  const key = mode==='sample' ? 'hintSample' : mode==='paste' ? 'hintPaste' : 'hintUpload';
+  hint.dataset.state = key; hint.textContent = t(key);
+}
+function loadSample(){ scrollToApp(); setInputMode('sample'); }
+function scrollToApp(){ document.getElementById('app').scrollIntoView({behavior:'smooth', block:'start'}); }
+
+/* drag & drop / file upload */
+const dz = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+let uploadedText = '';
+dz.addEventListener('click', ()=>fileInput.click());
+dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', ()=> dz.classList.remove('drag'));
+dz.addEventListener('drop', e=>{ e.preventDefault(); dz.classList.remove('drag'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); });
+async function handleFile(file){
+  const hint = document.getElementById('inputHint');
+  try{
+    if(file.name.toLowerCase().endsWith('.pdf')){
+      hint.textContent = lang==='hi' ? 'PDF पढ़ा जा रहा है…' : 'Reading PDF…';
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+      let out = '';
+      for(let i=1;i<=Math.min(pdf.numPages,30);i++){
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        out += content.items.map(it=>it.str).join(' ') + '\n';
+      }
+      uploadedText = out.trim();
+    } else {
+      uploadedText = await file.text();
+    }
+    dz.querySelector('div').textContent = '✓ ' + file.name;
+    hint.dataset.state='hintReady'; hint.textContent = t('hintReady');
+  }catch(err){
+    showToast((lang==='hi'?'फ़ाइल पढ़ने में समस्या: ':'Could not read file: ')+err.message);
+  }
+}
+
+/* ================= ANALYSIS ================= */
+function currentDocText(){
+  if(state.inputMode==='sample') return SAMPLE_LEASE;
+  if(state.inputMode==='paste') return document.getElementById('pasteArea').value.trim();
+  return uploadedText.trim();
+}
+function runAnalysis(){
+  const text = currentDocText();
+  if(!text){ showToast(lang==='hi' ? 'पहले एक दस्तावेज़ जोड़ें' : 'Add a document first'); return; }
+  stopSpeaking();
+  state.doc = { text, isSample: state.inputMode==='sample' };
+  state.cache = {}; state.chat = []; state.activeTab='summary';
+  document.getElementById('workspace').hidden = false;
+  buildFolderTabs();
+  document.getElementById('workspace').scrollIntoView({behavior:'smooth', block:'start'});
+  renderActivePanel();
+}
+function buildFolderTabs(){
+  const wrap = document.getElementById('folderTabs');
+  const tabs = ['summary','risks','ask','negotiate','scenarios','compare','lawyer'];
+  wrap.innerHTML = tabs.map(id=>`<button class="ftab ${id===state.activeTab?'active':''}" onclick="switchTab('${id}')"><span class="dot"></span>${t('tabs')[id]}</button>`).join('');
+}
+function switchTab(id){ stopSpeaking(); state.activeTab=id; buildFolderTabs(); renderActivePanel(); }
+
+/* ---- risk score ---- */
+function computeRiskScore(risks){
+  const counts={high:0,med:0,low:0}; risks.forEach(r=>counts[r.risk]++);
+  let score = 100 - counts.high*18 - counts.med*8 - counts.low*2;
+  score = Math.max(5, Math.min(97, score));
+  return {score, counts};
+}
+function renderScoreStrip(risks){
+  const {score} = computeRiskScore(risks);
+  const color = score>=75 ? 'var(--signal-green)' : score>=45 ? 'var(--signal-amber)' : 'var(--signal-red)';
+  const label = score>=75 ? t('scoreHigh') : score>=45 ? t('scoreMed') : t('scoreLow');
+  let exposureHtml = '';
+  if(state.doc.isSample){
+    exposureHtml = `<div class="exposure-line">${t('exposureLine')}<b>₹3,36,000</b> ${t('exposureDetail')}</div>`;
+  }
+  return `<div class="score-strip">
+      <div class="score-num" style="color:${color}">${score}<small>${t('fairnessScore')}</small></div>
+      <div class="score-bar-wrap"><div class="score-bar"><div style="width:${score}%;background:${color}"></div></div><div class="score-label" style="color:${color}">${label}</div></div>
+    </div>${exposureHtml}`;
+}
+
+/* ---- read aloud ---- */
+function stopSpeaking(){ try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} }
+function toggleSpeak(btnId, text){
+  if(!('speechSynthesis' in window)){ showToast(t('voiceUnsupported')); return; }
+  const btn = document.getElementById(btnId);
+  if(window.speechSynthesis.speaking){ stopSpeaking(); if(btn) btn.textContent = t('readAloud'); return; }
+  stopSpeaking();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang==='hi' ? 'hi-IN' : 'en-IN';
+  utter.rate = 0.95;
+  const reset = ()=>{ if(btn) btn.textContent = t('readAloud'); };
+  utter.onend = reset; utter.onerror = reset;
+  window.speechSynthesis.speak(utter);
+  if(btn) btn.textContent = t('stopAloud');
+}
+function speakSummary(){ const d = state.cache['summary']; if(d) toggleSpeak('speakSummaryBtn', d.text); }
+function speakNegotiate(){ const d = state.cache['negotiate']; if(d) toggleSpeak('speakNegotiateBtn', d.text); }
+
+/* ---- AI call layer: tries live Gemini, falls back to mock ---- */
+async function callGemini(system, user, jsonMode){
+  const model='gemini-1.5-flash-latest';
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${state.apiKey}`;
+  const body={ contents:[{parts:[{text:user}]}], systemInstruction:{parts:[{text:system}]}, generationConfig: jsonMode?{responseMimeType:"application/json"}:{} };
+  const ctrl = new AbortController(); const timer=setTimeout(()=>ctrl.abort(), 20000);
+  try{
+    const res = await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body), signal:ctrl.signal});
+    clearTimeout(timer);
+    if(!res.ok) throw new Error('status '+res.status);
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text;
+  } finally { clearTimeout(timer); }
+}
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+async function getPanelData(kind){
+  if(state.cache[kind]) return state.cache[kind];
+  let result;
+  const isSample = state.doc.isSample;
+  if(state.apiKey){
+    try{ result = await liveGenerate(kind); state.cache[kind]=result; return result; }
+    catch(err){ /* fall through to mock, note it */ state.liveFailed = true; }
+  }
+  await wait(650 + Math.random()*500);
+  result = isSample ? mockGenerate(kind) : mockGenerateGeneric(kind);
+  state.cache[kind]=result;
+  return result;
+}
+async function liveGenerate(kind){
+  const langInstr = lang==='hi' ? 'Respond entirely in Hindi (Devanagari script).' : 'Respond in English.';
+  const doc = state.doc.text;
+  if(kind==='summary'){
+    return { text: await callGemini(`You are a plain-language legal explainer. Summarise the document in under 150 words, 8th-grade reading level, no legal jargon. Add a one-line closing pointer to what's worth double-checking. Never give jurisdiction-specific legal advice; note this explains the document, not legal advice. ${langInstr}`, doc, false) };
+  }
+  if(kind==='risks'){
+    const raw = await callGemini(`Analyse this legal document clause by clause. Return ONLY a JSON array, each item: {"clause": short id/name, "risk": "high"|"med"|"low", "excerpt": short quoted excerpt, "explain": plain-language reason, "fix": one concrete negotiation ask}. 4-8 items covering the most important clauses. ${langInstr}`, doc, true);
+    try{ return JSON.parse(raw); }catch(e){ return mockGenerate('risks'); }
+  }
+  if(kind==='negotiate'){
+    return { text: await callGemini(`Draft a short, polite email from the signer to the other party requesting amendments to the 2-3 riskiest clauses in this document. Reference clauses by name, propose a specific fair alternative for each, keep it under 200 words, professional tone. ${langInstr}`, doc, false) };
+  }
+  if(kind==='lawyer'){
+    const raw = await callGemini(`Produce a one-page lawyer-consultation briefing for this document as JSON: {"facts": [4 short bullet facts], "flags": [3 short red-flag bullets], "questions": [3 sharp questions to ask a lawyer]}. ${langInstr}`, doc, true);
+    try{ return JSON.parse(raw); }catch(e){ return mockGenerate('lawyer'); }
+  }
+  if(kind==='compare'){ return mockGenerate('compare'); }
+}
+function mockGenerate(kind){
+  if(kind==='summary') return { text: SAMPLE_SUMMARY[lang] };
+  if(kind==='risks') return SAMPLE_RISKS.map(r=>({ clause:r.clause, risk:r.risk, excerpt:r.excerpt, explain: lang==='hi'?r.hi_explain:r.en_explain, fix: lang==='hi'?r.hi_fix:r.en_fix }));
+  if(kind==='negotiate') return { text: SAMPLE_SCRIPT[lang] };
+  if(kind==='lawyer') return SAMPLE_BRIEF[lang];
+  if(kind==='compare') return SAMPLE_COMPARE[lang];
+}
+function mockGenericSummaryText(){
+  return lang==='hi'
+    ? 'यह एक नमूना विश्लेषण है (आपके पेस्ट किए गए पाठ पर आधारित लाइव विश्लेषण के लिए एक मुफ़्त API कुंजी जोड़ें)। ऊपर सेटिंग्स में कुंजी जोड़ने के बाद यही पैनल आपके असली दस्तावेज़ पर काम करेगा।'
+    : "This is demo output shown for any document you provide without a live key — add a free Gemini key above (or self-host this page) to get a real, grounded analysis of your own text. The sample lease tab shows what live output looks like in full.";
+}
+function mockGenerateGeneric(kind){
+  if(kind==='risks') return SAMPLE_RISKS.slice(0,3).map(r=>({ clause:r.clause, risk:r.risk, excerpt:r.excerpt, explain: mockGenericSummaryText(), fix: lang==='hi'?r.hi_fix:r.en_fix }));
+  if(kind==='compare') return SAMPLE_COMPARE[lang];
+  if(kind==='lawyer') return SAMPLE_BRIEF[lang];
+  return { text: mockGenericSummaryText() };
+}
+
+/* ================= RENDER PANELS ================= */
+function renderActivePanel(){
+  const body = document.getElementById('panelBody');
+  const kind = state.activeTab;
+  body.innerHTML = `<div class="loading"><div class="spinner"></div>${lang==='hi'?'सोच रहा हूँ…':'Working…'}</div>`;
+  const titles = { summary:['📄','Plain-language summary'], risks:['🚩','Risk flags'], ask:['💬','Ask questions'], negotiate:['✉️','Negotiation script'], compare:['⚖️','Compare documents'], lawyer:['🧾','Prep for a lawyer'] };
+
+  if(kind==='ask'){ renderChat(body); return; }
+  if(kind==='compare'){ renderCompare(body); return; }
+  if(kind==='scenarios'){ renderScenarios(body); return; }
+
+  getPanelData(kind).then(data=>{
+    if(state.activeTab!==kind) return;
+    const note = (!state.apiKey || state.liveFailed) ? `<div class="badge" style="margin-bottom:14px;display:inline-block;">${t('demoNote')}</div>` : '';
+    if(kind==='summary'){
+      const insight = state.doc.isSample ? `<div class="insight-card">💡 <span><b>${t('insightTitle')}</b> ${t('insightBody')}</span></div>` : '';
+      body.innerHTML = `<h3 data-i="tabSummaryH">${lang==='hi'?'सारांश':'Summary'}</h3><p class="panel-sub">${t('glossHint')}</p>${note}<div class="summary-text">${highlightGlossary(escapeHtml(data.text))}</div>${insight}<div class="action-row"><button class="copybtn" id="speakSummaryBtn" onclick="speakSummary()">${t('readAloud')}</button></div>`;
+    } else if(kind==='risks'){
+      const counts = {high:0,med:0,low:0}; data.forEach(d=>counts[d.risk]++);
+      body.innerHTML = `<h3>${lang==='hi'?'जोखिम-चिह्नित शर्तें':'Flagged clauses'}</h3><p class="panel-sub">${lang==='hi'?'हर शर्त की जाँच, आसान शब्दों में।':'Every clause, checked and explained.'}</p>${note}
+        ${renderScoreStrip(data)}
+        <div class="badge-row"><span class="badge" style="color:var(--signal-red)">${counts.high} ${t('high')}</span><span class="badge" style="color:var(--signal-amber)">${counts.med} ${t('med')}</span><span class="badge" style="color:var(--signal-green)">${counts.low} ${t('low')}</span></div>
+        ${data.map(d=>`<div class="clause-card risk-${d.risk}"><div class="clause-head"><b>${escapeHtml(d.clause)}</b><span class="tag risk-${d.risk}">${t(d.risk==='med'?'med':d.risk)}</span></div><div class="clause-body"><div class="excerpt">"${highlightGlossary(escapeHtml(d.excerpt),'en')}"</div><div class="explain">${highlightGlossary(escapeHtml(d.explain))}</div><div class="fix"><b>${lang==='hi'?'सुझाव:':'Suggested fix:'}</b> ${escapeHtml(d.fix)}</div></div></div>`).join('')}`;
+    } else if(kind==='negotiate'){
+      body.innerHTML = `<h3>${lang==='hi'?'बातचीत की स्क्रिप्ट':'Negotiation script'}</h3><p class="panel-sub">${lang==='hi'?'तैयार संदेश — बस भेजें।':'Ready to send, edit as needed.'}</p>${note}<div class="script-box" id="scriptText">${escapeHtml(data.text)}</div><div class="action-row"><button class="copybtn" id="copyBtn" onclick="copyScript()">${t('copy')}</button><button class="copybtn" id="speakNegotiateBtn" onclick="speakNegotiate()">${t('readAloud')}</button></div>`;
+    } else if(kind==='lawyer'){
+      body.innerHTML = `<h3>${lang==='hi'?'वकील के लिए तैयारी':'Lawyer-prep briefing'}</h3><p class="panel-sub">${lang==='hi'?'अपनी पहली सलाह में यह साथ ले जाएं।':'Bring this to your first consultation.'}</p>${note}
+        <div class="brief-grid">
+          <div class="brief-block"><h4>${lang==='hi'?'मुख्य तथ्य':'Key facts'}</h4><ul>${data.facts.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
+          <div class="brief-block"><h4>${lang==='hi'?'चेतावनियाँ':'Red flags'}</h4><ul>${data.flags.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
+          <div class="brief-block"><h4>${lang==='hi'?'पूछने योग्य सवाल':'Questions to ask'}</h4><ul>${data.questions.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
+        </div>
+        <div class="action-row">
+          <button class="copybtn" onclick="copyBrief(${JSON.stringify(JSON.stringify(data)).replace(/"/g,'&quot;')})">${t('copyForLawyer')}</button>
+          <button class="copybtn" id="secondOpinionBtn" onclick="copySecondOpinion()">${t('copyForFriend')}</button>
+        </div>`;
+    }
+  });
+}
+function escapeHtml(s){ return (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function copyScript(){
+  const txt = document.getElementById('scriptText').innerText;
+  navigator.clipboard.writeText(txt).then(()=>{ const b=document.getElementById('copyBtn'); b.textContent=t('copied'); b.classList.add('copied'); setTimeout(()=>{b.textContent=t('copy'); b.classList.remove('copied');},1800); }).catch(()=>showToast(t('copy')+' — select text manually'));
+}
+function copyBrief(dataStr){
+  let data; try{ data = JSON.parse(dataStr); }catch(e){ return; }
+  const txt = [ (lang==='hi'?'मुख्य तथ्य':'Key facts')+':', ...data.facts.map(f=>'- '+f), '', (lang==='hi'?'चेतावनियाँ':'Red flags')+':', ...data.flags.map(f=>'- '+f), '', (lang==='hi'?'सवाल':'Questions')+':', ...data.questions.map(f=>'- '+f) ].join('\n');
+  navigator.clipboard.writeText(txt).then(()=>showToast(t('copied'))).catch(()=>showToast(t('copy')+' — select text manually'));
+}
+async function copySecondOpinion(){
+  const btn = document.getElementById('secondOpinionBtn');
+  if(btn) btn.textContent = t('preparingCopy');
+  const [summaryData, risksData] = await Promise.all([getPanelData('summary'), getPanelData('risks')]);
+  if(btn) btn.textContent = t('copyForFriend');
+  const top = risksData.filter(r=>r.risk==='high').slice(0,3);
+  const lines = [ t('secondOpinionIntro'), '', summaryData.text ];
+  if(top.length){
+    lines.push('', t('secondOpinionConcerns'));
+    top.forEach(r=> lines.push('• '+r.clause+' — '+r.explain));
+  }
+  lines.push('', t('secondOpinionSign'));
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast(t('copied'))).catch(()=>showToast(t('copy')+' — select text manually'));
+}
+
+/* ---- chat panel ---- */
+function renderChat(body){
+  body.innerHTML = `<h3>${lang==='hi'?'सवाल पूछें':'Ask this document'}</h3><p class="panel-sub">${lang==='hi'?'जवाब केवल इस दस्तावेज़ पर आधारित हैं।':"Answers stay grounded in this document."}</p>
+    <div class="chip-row">
+      ${(state.doc.isSample ? ['deposit','repair','leave early','entry','rent increase'] : []).map(q=>`<button class="chip" onclick="askChat('${q}')">${lang==='hi'?({'deposit':'जमा राशि?','repair':'मरम्मत किसकी?','leave early':'जल्दी छोड़ने पर?','entry':'प्रवेश नियम?','rent increase':'किराया कब बढ़ेगा?'})[q]:({'deposit':'What’s my deposit?','repair':'Who pays for repairs?','leave early':'What if I leave early?','entry':'Can they enter anytime?','rent increase':'When can rent go up?'})[q]}</button>`).join('')}
+    </div>
+    <div class="chat-log" id="chatLog"></div>
+    <form class="chat-form" onsubmit="return submitChat(event)">
+      <input type="text" id="chatInput" placeholder="${t('chatPlaceholder')}">
+      <button type="submit">${t('chatSend')}</button>
+    </form>`;
+  renderChatLog();
+}
+function renderChatLog(){
+  const log = document.getElementById('chatLog'); if(!log) return;
+  if(state.chat.length===0){ log.innerHTML = `<div class="msg bot">${lang==='hi'?'दस्तावेज़ के बारे में कुछ भी पूछें — जैसे "मेरी जमा राशि कितनी है?"':'Ask anything about the document — try "what’s my deposit?"'}</div>`; return; }
+  log.innerHTML = state.chat.map(m=>`<div class="msg ${m.role}">${escapeHtml(m.text)}</div>`).join('');
+  log.scrollTop = log.scrollHeight;
+}
+function submitChat(e){ e.preventDefault(); const inp=document.getElementById('chatInput'); const v=inp.value.trim(); if(!v) return; inp.value=''; askChat(v); return false; }
+async function askChat(q){
+  state.chat.push({role:'user', text:q});
+  renderChatLog();
+  const log = document.getElementById('chatLog');
+  const thinking = document.createElement('div'); thinking.className='msg bot'; thinking.textContent = lang==='hi'?'…':'…'; log.appendChild(thinking); log.scrollTop=log.scrollHeight;
+  let answer;
+  if(state.apiKey){
+    try{
+      const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
+      answer = await callGemini(`Answer the user's question using ONLY this document as context. Be concise (under 80 words). If the document doesn't cover it, say so plainly. This is information, not legal advice. ${langInstr}\n\nDOCUMENT:\n${state.doc.text}`, q, false);
+    }catch(err){ answer = null; }
+  }
+  if(!answer){
+    await wait(500);
+    const hit = CHAT_QA.find(c=>c.k.some(kw=>q.toLowerCase().includes(kw.toLowerCase())));
+    answer = hit ? hit[lang] : (state.doc.isSample ? (lang==='hi'?'नमूना दस्तावेज़ में इसका सीधा जवाब नहीं है — कोशिश करें: जमा, मरम्मत, जल्दी छोड़ना, प्रवेश, या किराया वृद्धि के बारे में पूछें।':'That’s not covered directly in this sample — try asking about the deposit, repairs, leaving early, entry notice, or rent increases.') : mockGenericSummaryText());
+  }
+  state.chat.push({role:'bot', text:answer});
+  renderChatLog();
+}
+
+/* ---- compare panel ---- */
+function renderCompare(body){
+  const d = SAMPLE_COMPARE[lang];
+  body.innerHTML = `<h3>${lang==='hi'?'दस्तावेज़ों की तुलना करें':'Compare two documents'}</h3><p class="panel-sub">${lang==='hi'?'नमूना: दो नौकरी के प्रस्ताव, साथ-साथ।':'Sample: two job offers, side by side.'}</p>
+    <div class="badge" style="margin-bottom:14px;display:inline-block;">${t('demoNote')}</div>
+    <div class="compare-grid">
+      <div class="compare-col"><h4>${d.left_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='a'?'better':''}">${r.a}</span></div>`).join('')}</div>
+      <div class="compare-col"><h4>${d.right_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='b'?'better':''}">${r.b}</span></div>`).join('')}</div>
+    </div>
+    <div class="verdict"><b>${lang==='hi'?'निष्कर्ष: ':'Verdict: '}</b>${d.verdict}</div>`;
+}
+
+/* ---- scenario simulator ---- */
+function renderScenarios(body){
+  const isSample = state.doc.isSample;
+  body.innerHTML = `<h3>${t('scenarioTitle')}</h3><p class="panel-sub">${t('scenarioSub')}</p>
+    ${!isSample?`<div class="badge" style="margin-bottom:14px;display:inline-block;">${t('demoNote')}</div>`:''}
+    <div class="scenario-grid">${SCENARIOS.map(s=>`<button type="button" class="scenario-btn" onclick="askScenario('${s.id}')">${escapeHtml(lang==='hi'?s.hi_q:s.en_q)}</button>`).join('')}</div>
+    <textarea id="customScenario" placeholder="${t('scenarioCustomPh')}" style="min-height:70px;margin-top:12px;"></textarea>
+    <div class="panel-actions" style="margin-top:10px;"><span></span><button class="btn btn-primary" onclick="askCustomScenario()">${t('scenarioAsk')}</button></div>
+    <div id="scenarioAnswer"></div>`;
+}
+async function askScenario(id){
+  const s = SCENARIOS.find(x=>x.id===id);
+  if(!s) return;
+  const question = lang==='hi' ? s.hi_q : s.en_q;
+  showScenarioAnswer(question, null, true);
+  let answer = null;
+  if(state.apiKey){
+    try{
+      const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
+      answer = await callGemini(`The user is worried about a specific situation regarding this document. Give a concrete, grounded, practical answer under 100 words, citing the relevant clause if the document has one. This is information, not legal advice. ${langInstr}`, question+'\n\nDOCUMENT:\n'+state.doc.text, false);
+    }catch(e){ answer = null; }
+  }
+  if(!answer){ await wait(600); answer = lang==='hi' ? s.hi_a : s.en_a; }
+  showScenarioAnswer(question, answer, false);
+}
+async function askCustomScenario(){
+  const input = document.getElementById('customScenario');
+  const v = input.value.trim();
+  if(!v) return;
+  input.value = '';
+  showScenarioAnswer(v, null, true);
+  let answer = null;
+  if(state.apiKey){
+    try{
+      const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
+      answer = await callGemini(`The user is worried about a specific situation regarding this document. Give a concrete, grounded, practical answer under 100 words, citing the relevant clause if the document has one. This is information, not legal advice. ${langInstr}`, v+'\n\nDOCUMENT:\n'+state.doc.text, false);
+    }catch(e){ answer = null; }
+  }
+  if(!answer){ await wait(600); answer = mockGenericSummaryText(); }
+  showScenarioAnswer(v, answer, false);
+}
+function showScenarioAnswer(question, answer, loading){
+  const el = document.getElementById('scenarioAnswer'); if(!el) return;
+  if(loading){
+    el.innerHTML = `<div class="clause-card"><div class="clause-head"><b>${escapeHtml(question)}</b></div><div class="clause-body"><div class="loading" style="padding:6px 0;"><div class="spinner"></div>${lang==='hi'?'सोच रहा हूँ…':'Working…'}</div></div></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="clause-card"><div class="clause-head"><b>${escapeHtml(question)}</b></div><div class="clause-body"><div class="explain">${highlightGlossary(escapeHtml(answer))}</div></div></div>`;
+}
+
+/* ================= INIT ================= */
+applyI18n();
+setInputMode('sample');
+</script>
