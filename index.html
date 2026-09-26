@@ -745,7 +745,7 @@ const SCENARIOS = [
    setup (no key ever reaches the browser). See proxy/worker.js and
    README.md "Deploying the AI proxy". Leave blank to disable — the app
    then falls back to a personal key or demo output only. */
-const PROXY_URL = ''; // e.g. 'https://spashta-proxy.<your-subdomain>.workers.dev'
+const PROXY_URL = 'https://hidden-brook-3a68.nitishkhurana.workers.dev';
 
 /* ================= STATE ================= */
 const state = { doc:null, inputMode:'sample', activeTab:'summary', loading:false, cache:{}, chat:[], apiKey:'', groqKey:'', compareLoaded:false };
@@ -934,7 +934,7 @@ function speakNegotiate(){ const d = state.cache['negotiate']; if(d) toggleSpeak
    retired). Docs: https://ai.google.dev/gemini-api/docs/interactions-overview */
 const GEMINI_MODEL = 'gemini-3.8-flash';
 const GEMINI_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_MODEL = 'openai/gpt-oss-20b';
 function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function parseGeminiResponse(data){
   if(typeof data.output_text === 'string' && data.output_text) return data.output_text;

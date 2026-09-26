@@ -15,7 +15,7 @@
 
 const ALLOWED_ORIGIN = 'https://nitishkhurana.github.io';
 const GEMINI_MODEL = 'gemini-3.8-flash';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_MODEL = 'openai/gpt-oss-20b';
 
 export default {
   async fetch(request, env) {
