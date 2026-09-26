@@ -371,7 +371,7 @@ footer{ padding-block:34px; }
   <div class="cost-table-wrap"><table class="cost-table">
     <thead><tr><th data-i="ch1">Piece</th><th data-i="ch2">Free option used here</th><th data-i="ch3">Free limit</th><th data-i="ch4">Cost to start</th></tr></thead>
     <tbody>
-      <tr><td data-i="cr1a">AI model</td><td data-i="cr1b">Google Gemini 1.5 Flash API</td><td data-i="cr1c">~1,500 requests/day free tier</td><td><span class="cost-pill">₹0</span></td></tr>
+      <tr><td data-i="cr1a">AI model</td><td data-i="cr1b">Google Gemini 2.5 Flash API</td><td data-i="cr1c">~1,500 requests/day free tier</td><td><span class="cost-pill">₹0</span></td></tr>
       <tr><td data-i="cr2a">Hosting</td><td data-i="cr2b">GitHub Pages / Netlify / Vercel / Cloudflare Pages</td><td data-i="cr2c">Unlimited static hosting on free plan</td><td><span class="cost-pill">₹0</span></td></tr>
       <tr><td data-i="cr3a">PDF reading</td><td data-i="cr3b">pdf.js (runs in the browser)</td><td data-i="cr3c">No server, no limit</td><td><span class="cost-pill">₹0</span></td></tr>
       <tr><td data-i="cr4a">Storage</td><td data-i="cr4b">Browser localStorage only</td><td data-i="cr4c">No database needed for MVP</td><td><span class="cost-pill">₹0</span></td></tr>
@@ -404,7 +404,7 @@ footer{ padding-block:34px; }
 <div class="modal-overlay" id="modalOverlay" hidden>
   <div class="modal">
     <h3 data-i="modalTitle">Add a free Gemini API key</h3>
-    <p data-i="modalSub">Optional. Without a key, every panel below runs on realistic sample output so you can see the product working right now. With a key, the same panels call Gemini 1.5 Flash live on your own text.</p>
+    <p data-i="modalSub">Optional. Without a key, every panel below runs on realistic sample output so you can see the product working right now. With a key, the same panels call Gemini 2.5 Flash live on your own text.</p>
     <input type="password" id="apiKeyInput" placeholder="AIza…" autocomplete="off">
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="clearKey()" data-i="modalClear">Clear key</button>
@@ -446,7 +446,7 @@ en:{
   costTitle:"What this actually costs to run",
   costSub:"Every piece of this demo has a free tier that's generous enough for a hackathon, a pilot, or a small NGO's real usage. Nothing below required a credit card.",
   ch1:"Piece", ch2:"Free option used here", ch3:"Free limit", ch4:"Cost to start",
-  cr1a:"AI model", cr1b:"Google Gemini 1.5 Flash API", cr1c:"~1,500 requests/day free tier",
+  cr1a:"AI model", cr1b:"Google Gemini 2.5 Flash API", cr1c:"~1,500 requests/day free tier",
   cr2a:"Hosting", cr2b:"GitHub Pages / Netlify / Vercel / Cloudflare Pages", cr2c:"Unlimited static hosting on free plan",
   cr3a:"PDF reading", cr3b:"pdf.js (runs in the browser)", cr3c:"No server, no limit",
   cr4a:"Storage", cr4b:"Browser localStorage only", cr4c:"No database needed for MVP",
@@ -460,7 +460,7 @@ en:{
   rc3t:"WhatsApp, not a website", rc3d:"The people who most need this rarely start at a URL. A WhatsApp number you forward a photo of a document to meets them where they already are — free tier covers a real pilot.",
   discB:"Not a lawyer.", discT:"Spashta explains documents and drafts communications for you — it doesn't replace a licensed advocate, and nothing here is legal advice for your specific situation. For anything with real money or real risk attached, use the \"Prep for a lawyer\" output to get a proper consultation, faster.",
   footL:"GenAI for Legal Access", footR:"Demo mode uses sample data. Bring your own free API key for live analysis.",
-  modalTitle:"Add a free Gemini API key", modalSub:"Optional. Without a key, every panel below runs on realistic sample output so you can see the product working right now. With a key, the same panels call Gemini 1.5 Flash live on your own text.",
+  modalTitle:"Add a free Gemini API key", modalSub:"Optional. Without a key, every panel below runs on realistic sample output so you can see the product working right now. With a key, the same panels call Gemini 2.5 Flash live on your own text.",
   modalClear:"Clear key", modalSave:"Save & close", modalClose:"Close",
   modalNote:"Stored only in this browser's localStorage — never sent anywhere but Google's API. Get a free key at aistudio.google.com/apikey. Note: live calls only work when this page is self-hosted (GitHub Pages, Netlify, etc.) — this hosted preview runs in a sandbox that blocks outbound API calls, so it will gracefully fall back to demo output here.",
   tabs:{summary:"Summary",risks:"Risk flags",ask:"Ask questions",negotiate:"Negotiate",scenarios:"What if…?",compare:"Compare",lawyer:"Lawyer prep"},
@@ -501,7 +501,7 @@ hi:{
   costTitle:"इसे चलाने की वास्तविक लागत",
   costSub:"इस डेमो के हर हिस्से में एक मुफ़्त स्तर है जो हैकथॉन, पायलट या छोटे एनजीओ के वास्तविक उपयोग के लिए पर्याप्त है। नीचे किसी के लिए क्रेडिट कार्ड की ज़रूरत नहीं थी।",
   ch1:"हिस्सा", ch2:"यहाँ इस्तेमाल किया गया मुफ़्त विकल्प", ch3:"मुफ़्त सीमा", ch4:"शुरू करने की लागत",
-  cr1a:"AI मॉडल", cr1b:"Google Gemini 1.5 Flash API", cr1c:"~1,500 अनुरोध/दिन मुफ़्त",
+  cr1a:"AI मॉडल", cr1b:"Google Gemini 2.5 Flash API", cr1c:"~1,500 अनुरोध/दिन मुफ़्त",
   cr2a:"होस्टिंग", cr2b:"GitHub Pages / Netlify / Vercel / Cloudflare Pages", cr2c:"मुफ़्त प्लान पर असीमित स्टैटिक होस्टिंग",
   cr3a:"PDF पढ़ना", cr3b:"pdf.js (ब्राउज़र में चलता है)", cr3c:"कोई सर्वर नहीं, कोई सीमा नहीं",
   cr4a:"स्टोरेज", cr4b:"सिर्फ़ ब्राउज़र localStorage", cr4c:"MVP के लिए डेटाबेस ज़रूरी नहीं",
@@ -887,17 +887,24 @@ function speakSummary(){ const d = state.cache['summary']; if(d) toggleSpeak('sp
 function speakNegotiate(){ const d = state.cache['negotiate']; if(d) toggleSpeak('speakNegotiateBtn', d.text); }
 
 /* ---- AI call layer: tries live Gemini, falls back to mock ---- */
+const GEMINI_MODEL = 'gemini-2.5-flash';
 async function callGemini(system, user, jsonMode){
-  const model='gemini-1.5-flash-latest';
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${state.apiKey}`;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${state.apiKey}`;
   const body={ contents:[{parts:[{text:user}]}], systemInstruction:{parts:[{text:system}]}, generationConfig: jsonMode?{responseMimeType:"application/json"}:{} };
   const ctrl = new AbortController(); const timer=setTimeout(()=>ctrl.abort(), 20000);
   try{
     const res = await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body), signal:ctrl.signal});
     clearTimeout(timer);
-    if(!res.ok) throw new Error('status '+res.status);
+    if(!res.ok){
+      let detail = '';
+      try{ const errJson = await res.json(); detail = errJson?.error?.message || ''; }catch(e){}
+      throw new Error(`Gemini API ${res.status}${detail ? ': '+detail : ''}`);
+    }
     const data = await res.json();
-    return data.candidates[0].content.parts[0].text;
+    const candidate = data?.candidates?.[0];
+    const text = candidate?.content?.parts?.[0]?.text;
+    if(text===undefined) throw new Error('Gemini returned no text (finishReason: '+(candidate?.finishReason||'unknown')+')');
+    return text;
   } finally { clearTimeout(timer); }
 }
 function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -907,12 +914,18 @@ async function getPanelData(kind){
   const isSample = state.doc.isSample;
   if(state.apiKey){
     try{ result = await liveGenerate(kind); state.cache[kind]=result; return result; }
-    catch(err){ /* fall through to mock, note it */ state.liveFailed = true; }
+    catch(err){
+      state.liveFailed = true;
+      showToast((lang==='hi'?'लाइव AI विफल, नमूना दिखाया जा रहा है — ':'Live AI call failed, showing demo output — ')+err.message, 6000);
+    }
   }
   await wait(650 + Math.random()*500);
   result = isSample ? mockGenerate(kind) : mockGenerateGeneric(kind);
   state.cache[kind]=result;
   return result;
+}
+function stripJsonFence(raw){
+  return raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/,'').trim();
 }
 async function liveGenerate(kind){
   const langInstr = lang==='hi' ? 'Respond entirely in Hindi (Devanagari script).' : 'Respond in English.';
@@ -922,14 +935,14 @@ async function liveGenerate(kind){
   }
   if(kind==='risks'){
     const raw = await callGemini(`Analyse this legal document clause by clause. Return ONLY a JSON array, each item: {"clause": short id/name, "risk": "high"|"med"|"low", "excerpt": short quoted excerpt, "explain": plain-language reason, "fix": one concrete negotiation ask}. 4-8 items covering the most important clauses. ${langInstr}`, doc, true);
-    try{ return JSON.parse(raw); }catch(e){ return mockGenerate('risks'); }
+    try{ return JSON.parse(stripJsonFence(raw)); }catch(e){ throw new Error('Could not parse risk analysis JSON from Gemini'); }
   }
   if(kind==='negotiate'){
     return { text: await callGemini(`Draft a short, polite email from the signer to the other party requesting amendments to the 2-3 riskiest clauses in this document. Reference clauses by name, propose a specific fair alternative for each, keep it under 200 words, professional tone. ${langInstr}`, doc, false) };
   }
   if(kind==='lawyer'){
     const raw = await callGemini(`Produce a one-page lawyer-consultation briefing for this document as JSON: {"facts": [4 short bullet facts], "flags": [3 short red-flag bullets], "questions": [3 sharp questions to ask a lawyer]}. ${langInstr}`, doc, true);
-    try{ return JSON.parse(raw); }catch(e){ return mockGenerate('lawyer'); }
+    try{ return JSON.parse(stripJsonFence(raw)); }catch(e){ throw new Error('Could not parse lawyer-briefing JSON from Gemini'); }
   }
   if(kind==='compare'){ return mockGenerate('compare'); }
 }
@@ -1046,7 +1059,7 @@ async function askChat(q){
     try{
       const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
       answer = await callGemini(`Answer the user's question using ONLY this document as context. Be concise (under 80 words). If the document doesn't cover it, say so plainly. This is information, not legal advice. ${langInstr}\n\nDOCUMENT:\n${state.doc.text}`, q, false);
-    }catch(err){ answer = null; }
+    }catch(err){ answer = null; showToast((lang==='hi'?'लाइव AI विफल — ':'Live AI call failed — ')+err.message, 6000); }
   }
   if(!answer){
     await wait(500);
@@ -1089,7 +1102,7 @@ async function askScenario(id){
     try{
       const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
       answer = await callGemini(`The user is worried about a specific situation regarding this document. Give a concrete, grounded, practical answer under 100 words, citing the relevant clause if the document has one. This is information, not legal advice. ${langInstr}`, question+'\n\nDOCUMENT:\n'+state.doc.text, false);
-    }catch(e){ answer = null; }
+    }catch(e){ answer = null; showToast((lang==='hi'?'लाइव AI विफल — ':'Live AI call failed — ')+e.message, 6000); }
   }
   if(!answer){ await wait(600); answer = lang==='hi' ? s.hi_a : s.en_a; }
   showScenarioAnswer(question, answer, false);
@@ -1105,7 +1118,7 @@ async function askCustomScenario(){
     try{
       const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
       answer = await callGemini(`The user is worried about a specific situation regarding this document. Give a concrete, grounded, practical answer under 100 words, citing the relevant clause if the document has one. This is information, not legal advice. ${langInstr}`, v+'\n\nDOCUMENT:\n'+state.doc.text, false);
-    }catch(e){ answer = null; }
+    }catch(e){ answer = null; showToast((lang==='hi'?'लाइव AI विफल — ':'Live AI call failed — ')+e.message, 6000); }
   }
   if(!answer){ await wait(600); answer = mockGenericSummaryText(); }
   showScenarioAnswer(v, answer, false);
