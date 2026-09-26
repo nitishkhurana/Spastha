@@ -461,6 +461,18 @@ en:{
   scenarioCustomPh:"Or describe your own situation…", scenarioAsk:"Get an answer →",
   copyForLawyer:"Copy for a lawyer", copyForFriend:"Copy for a second opinion", preparingCopy:"Preparing…",
   secondOpinionIntro:"Could I get your take on this document?", secondOpinionConcerns:"Biggest concerns:", secondOpinionSign:"(Made with Spashta)",
+  keysSaved:"Key(s) saved", keysCleared:"Keys cleared", fileReadError:"Could not read file: ",
+  liveFailedDemo:"Live AI call failed, showing demo output — ", liveFailedPrefix:"Live AI call failed — ",
+  working:"Working…",
+  summaryHeading:"Summary", flaggedClausesH:"Flagged clauses", everyClauseSub:"Every clause, checked and explained.", suggestedFixLabel:"Suggested fix:",
+  negotiateH:"Negotiation script", readyToSendSub:"Ready to send, edit as needed.",
+  lawyerPrepH:"Lawyer-prep briefing", bringToConsultSub:"Bring this to your first consultation.",
+  keyFactsH:"Key facts", redFlagsH:"Red flags", questionsToAskH:"Questions to ask", questionsLabel:"Questions",
+  askDocumentH:"Ask this document", answersGroundedSub:"Answers stay grounded in this document.",
+  chatEmptyHint:"Ask anything about the document — try \"what’s my deposit?\"",
+  chatFallbackNote:"That’s not covered directly in this sample — try asking about the deposit, repairs, leaving early, entry notice, or rent increases.",
+  compareTwoH:"Compare two documents", compareSampleSub:"Sample: two job offers, side by side.", verdictLabel:"Verdict: ",
+  readingPdf:"Reading PDF…", addDocumentFirst:"Add a document first",
 },
 hi:{
   tag:"सरल भाषा में कानूनी मदद", apiKeyBtn:"एपीआई कुंजी",
@@ -508,6 +520,18 @@ hi:{
   scenarioCustomPh:"या अपनी स्थिति खुद लिखें…", scenarioAsk:"जवाब पाएं →",
   copyForLawyer:"वकील के लिए कॉपी करें", copyForFriend:"दोस्त/परिवार के लिए कॉपी करें", preparingCopy:"तैयार हो रहा है…",
   secondOpinionIntro:"मुझे इस दस्तावेज़ पर आपकी राय चाहिए:", secondOpinionConcerns:"सबसे बड़ी चिंताएं:", secondOpinionSign:"(Spashta से बना)",
+  keysSaved:"कुंजी सेव हो गई", keysCleared:"कुंजी हटा दी गई", fileReadError:"फ़ाइल पढ़ने में समस्या: ",
+  liveFailedDemo:"लाइव AI विफल, नमूना दिखाया जा रहा है — ", liveFailedPrefix:"लाइव AI विफल — ",
+  working:"सोच रहा हूँ…",
+  summaryHeading:"सारांश", flaggedClausesH:"जोखिम-चिह्नित शर्तें", everyClauseSub:"हर शर्त की जाँच, आसान शब्दों में।", suggestedFixLabel:"सुझाव:",
+  negotiateH:"बातचीत की स्क्रिप्ट", readyToSendSub:"तैयार संदेश — बस भेजें।",
+  lawyerPrepH:"वकील के लिए तैयारी", bringToConsultSub:"अपनी पहली सलाह में यह साथ ले जाएं।",
+  keyFactsH:"मुख्य तथ्य", redFlagsH:"चेतावनियाँ", questionsToAskH:"पूछने योग्य सवाल", questionsLabel:"सवाल",
+  askDocumentH:"सवाल पूछें", answersGroundedSub:"जवाब केवल इस दस्तावेज़ पर आधारित हैं।",
+  chatEmptyHint:"दस्तावेज़ के बारे में कुछ भी पूछें — जैसे \"मेरी जमा राशि कितनी है?\"",
+  chatFallbackNote:"नमूना दस्तावेज़ में इसका सीधा जवाब नहीं है — कोशिश करें: जमा, मरम्मत, जल्दी छोड़ना, प्रवेश, या किराया वृद्धि के बारे में पूछें।",
+  compareTwoH:"दस्तावेज़ों की तुलना करें", compareSampleSub:"नमूना: दो नौकरी के प्रस्ताव, साथ-साथ।", verdictLabel:"निष्कर्ष: ",
+  readingPdf:"PDF पढ़ा जा रहा है…", addDocumentFirst:"पहले एक दस्तावेज़ जोड़ें",
 }
 };
 let lang = 'en';
@@ -789,7 +813,7 @@ function saveKey(){
   try{localStorage.setItem('spashta_groq_key',gv);}catch(e){}
   document.getElementById('keyBtn').classList.toggle('active', hasLiveKey());
   closeModal();
-  showToast(hasLiveKey() ? (lang==='hi'?'कुंजी सेव हो गई':'Key(s) saved') : (lang==='hi'?'कुंजी हटा दी गई':'Keys cleared'));
+  showToast(hasLiveKey() ? t('keysSaved') : t('keysCleared'));
 }
 function clearKey(){
   document.getElementById('apiKeyInput').value=''; document.getElementById('groqKeyInput').value='';
@@ -829,7 +853,7 @@ async function handleFile(file){
   const hint = document.getElementById('inputHint');
   try{
     if(file.name.toLowerCase().endsWith('.pdf')){
-      hint.textContent = lang==='hi' ? 'PDF पढ़ा जा रहा है…' : 'Reading PDF…';
+      hint.textContent = t('readingPdf');
       const buf = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({data:buf}).promise;
       let out = '';
@@ -845,7 +869,7 @@ async function handleFile(file){
     dz.querySelector('div').textContent = '✓ ' + file.name;
     hint.dataset.state='hintReady'; hint.textContent = t('hintReady');
   }catch(err){
-    showToast((lang==='hi'?'फ़ाइल पढ़ने में समस्या: ':'Could not read file: ')+err.message);
+    showToast(t('fileReadError')+err.message);
   }
 }
 
@@ -857,7 +881,7 @@ function currentDocText(){
 }
 function runAnalysis(){
   const text = currentDocText();
-  if(!text){ showToast(lang==='hi' ? 'पहले एक दस्तावेज़ जोड़ें' : 'Add a document first'); return; }
+  if(!text){ showToast(t('addDocumentFirst')); return; }
   stopSpeaking();
   state.doc = { text, isSample: state.inputMode==='sample' };
   state.cache = {}; state.chat = []; state.activeTab='summary';
@@ -1087,7 +1111,7 @@ async function getPanelData(kind){
     try{ result = await liveGenerate(kind); state.cache[kind]=result; return result; }
     catch(err){
       state.liveFailed = true;
-      showToast((lang==='hi'?'लाइव AI विफल, नमूना दिखाया जा रहा है — ':'Live AI call failed, showing demo output — ')+err.message, 6000);
+      showToast(t('liveFailedDemo')+err.message, 6000);
     }
   }
   await wait(650 + Math.random()*500);
@@ -1144,40 +1168,44 @@ function mockGenerateGeneric(kind){
 function renderActivePanel(){
   const body = document.getElementById('panelBody');
   const kind = state.activeTab;
-  body.innerHTML = `<div class="loading"><div class="spinner"></div>${lang==='hi'?'सोच रहा हूँ…':'Working…'}</div>`;
-  const titles = { summary:['📄','Plain-language summary'], risks:['🚩','Risk flags'], ask:['💬','Ask questions'], negotiate:['✉️','Negotiation script'], compare:['⚖️','Compare documents'], lawyer:['🧾','Prep for a lawyer'] };
+  body.innerHTML = `<div class="loading"><div class="spinner"></div>${t('working')}</div>`;
 
   if(kind==='ask'){ renderChat(body); return; }
   if(kind==='compare'){ renderCompare(body); return; }
   if(kind==='scenarios'){ renderScenarios(body); return; }
 
+  const PANEL_RENDERERS = { summary: renderSummaryPanel, risks: renderRisksPanel, negotiate: renderNegotiatePanel, lawyer: renderLawyerPanel };
   getPanelData(kind).then(data=>{
     if(state.activeTab!==kind) return;
     const note = (!hasLiveKey() || state.liveFailed) ? `<div class="badge" style="margin-bottom:14px;display:inline-block;">${t('demoNote')}</div>` : '';
-    if(kind==='summary'){
-      const insight = state.doc.isSample ? `<div class="insight-card">💡 <span><b>${t('insightTitle')}</b> ${t('insightBody')}</span></div>` : '';
-      body.innerHTML = `<h3 data-i="tabSummaryH">${lang==='hi'?'सारांश':'Summary'}</h3><p class="panel-sub">${t('glossHint')}</p>${note}<div class="summary-text">${highlightGlossary(escapeHtml(data.text))}</div>${insight}<div class="action-row"><button class="copybtn" id="speakSummaryBtn" onclick="speakSummary()">${t('readAloud')}</button></div>`;
-    } else if(kind==='risks'){
-      const counts = {high:0,med:0,low:0}; data.forEach(d=>counts[d.risk]++);
-      body.innerHTML = `<h3>${lang==='hi'?'जोखिम-चिह्नित शर्तें':'Flagged clauses'}</h3><p class="panel-sub">${lang==='hi'?'हर शर्त की जाँच, आसान शब्दों में।':'Every clause, checked and explained.'}</p>${note}
-        ${renderScoreStrip(data)}
-        <div class="badge-row"><span class="badge" style="color:var(--signal-red)">${counts.high} ${t('high')}</span><span class="badge" style="color:var(--signal-amber)">${counts.med} ${t('med')}</span><span class="badge" style="color:var(--signal-green)">${counts.low} ${t('low')}</span></div>
-        ${data.map(d=>`<div class="clause-card risk-${d.risk}"><div class="clause-head"><b>${escapeHtml(d.clause)}</b><span class="tag risk-${d.risk}">${t(d.risk==='med'?'med':d.risk)}</span></div><div class="clause-body"><div class="excerpt">"${highlightGlossary(escapeHtml(d.excerpt),'en')}"</div><div class="explain">${highlightGlossary(escapeHtml(d.explain))}</div><div class="fix"><b>${lang==='hi'?'सुझाव:':'Suggested fix:'}</b> ${escapeHtml(d.fix)}</div></div></div>`).join('')}`;
-    } else if(kind==='negotiate'){
-      body.innerHTML = `<h3>${lang==='hi'?'बातचीत की स्क्रिप्ट':'Negotiation script'}</h3><p class="panel-sub">${lang==='hi'?'तैयार संदेश — बस भेजें।':'Ready to send, edit as needed.'}</p>${note}<div class="script-box" id="scriptText">${escapeHtml(data.text)}</div><div class="action-row"><button class="copybtn" id="copyBtn" onclick="copyScript()">${t('copy')}</button><button class="copybtn" id="speakNegotiateBtn" onclick="speakNegotiate()">${t('readAloud')}</button></div>`;
-    } else if(kind==='lawyer'){
-      body.innerHTML = `<h3>${lang==='hi'?'वकील के लिए तैयारी':'Lawyer-prep briefing'}</h3><p class="panel-sub">${lang==='hi'?'अपनी पहली सलाह में यह साथ ले जाएं।':'Bring this to your first consultation.'}</p>${note}
-        <div class="brief-grid">
-          <div class="brief-block"><h4>${lang==='hi'?'मुख्य तथ्य':'Key facts'}</h4><ul>${data.facts.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
-          <div class="brief-block"><h4>${lang==='hi'?'चेतावनियाँ':'Red flags'}</h4><ul>${data.flags.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
-          <div class="brief-block"><h4>${lang==='hi'?'पूछने योग्य सवाल':'Questions to ask'}</h4><ul>${data.questions.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
-        </div>
-        <div class="action-row">
-          <button class="copybtn" onclick="copyBrief(${JSON.stringify(JSON.stringify(data)).replace(/"/g,'&quot;')})">${t('copyForLawyer')}</button>
-          <button class="copybtn" id="secondOpinionBtn" onclick="copySecondOpinion()">${t('copyForFriend')}</button>
-        </div>`;
-    }
+    PANEL_RENDERERS[kind](body, data, note);
   });
+}
+function renderSummaryPanel(body, data, note){
+  const insight = state.doc.isSample ? `<div class="insight-card">💡 <span><b>${t('insightTitle')}</b> ${t('insightBody')}</span></div>` : '';
+  body.innerHTML = `<h3>${t('summaryHeading')}</h3><p class="panel-sub">${t('glossHint')}</p>${note}<div class="summary-text">${highlightGlossary(escapeHtml(data.text))}</div>${insight}<div class="action-row"><button class="copybtn" id="speakSummaryBtn" onclick="speakSummary()">${t('readAloud')}</button></div>`;
+}
+function renderRisksPanel(body, data, note){
+  const counts = {high:0,med:0,low:0}; data.forEach(d=>counts[d.risk]++);
+  body.innerHTML = `<h3>${t('flaggedClausesH')}</h3><p class="panel-sub">${t('everyClauseSub')}</p>${note}
+    ${renderScoreStrip(data)}
+    <div class="badge-row"><span class="badge" style="color:var(--signal-red)">${counts.high} ${t('high')}</span><span class="badge" style="color:var(--signal-amber)">${counts.med} ${t('med')}</span><span class="badge" style="color:var(--signal-green)">${counts.low} ${t('low')}</span></div>
+    ${data.map(d=>`<div class="clause-card risk-${d.risk}"><div class="clause-head"><b>${escapeHtml(d.clause)}</b><span class="tag risk-${d.risk}">${t(d.risk==='med'?'med':d.risk)}</span></div><div class="clause-body"><div class="excerpt">"${highlightGlossary(escapeHtml(d.excerpt),'en')}"</div><div class="explain">${highlightGlossary(escapeHtml(d.explain))}</div><div class="fix"><b>${t('suggestedFixLabel')}</b> ${escapeHtml(d.fix)}</div></div></div>`).join('')}`;
+}
+function renderNegotiatePanel(body, data, note){
+  body.innerHTML = `<h3>${t('negotiateH')}</h3><p class="panel-sub">${t('readyToSendSub')}</p>${note}<div class="script-box" id="scriptText">${escapeHtml(data.text)}</div><div class="action-row"><button class="copybtn" id="copyBtn" onclick="copyScript()">${t('copy')}</button><button class="copybtn" id="speakNegotiateBtn" onclick="speakNegotiate()">${t('readAloud')}</button></div>`;
+}
+function renderLawyerPanel(body, data, note){
+  body.innerHTML = `<h3>${t('lawyerPrepH')}</h3><p class="panel-sub">${t('bringToConsultSub')}</p>${note}
+    <div class="brief-grid">
+      <div class="brief-block"><h4>${t('keyFactsH')}</h4><ul>${data.facts.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
+      <div class="brief-block"><h4>${t('redFlagsH')}</h4><ul>${data.flags.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
+      <div class="brief-block"><h4>${t('questionsToAskH')}</h4><ul>${data.questions.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>
+    </div>
+    <div class="action-row">
+      <button class="copybtn" onclick="copyBrief(${JSON.stringify(JSON.stringify(data)).replace(/"/g,'&quot;')})">${t('copyForLawyer')}</button>
+      <button class="copybtn" id="secondOpinionBtn" onclick="copySecondOpinion()">${t('copyForFriend')}</button>
+    </div>`;
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function copyScript(){
@@ -1186,7 +1214,7 @@ function copyScript(){
 }
 function copyBrief(dataStr){
   let data; try{ data = JSON.parse(dataStr); }catch(e){ return; }
-  const txt = [ (lang==='hi'?'मुख्य तथ्य':'Key facts')+':', ...data.facts.map(f=>'- '+f), '', (lang==='hi'?'चेतावनियाँ':'Red flags')+':', ...data.flags.map(f=>'- '+f), '', (lang==='hi'?'सवाल':'Questions')+':', ...data.questions.map(f=>'- '+f) ].join('\n');
+  const txt = [ t('keyFactsH')+':', ...data.facts.map(f=>'- '+f), '', t('redFlagsH')+':', ...data.flags.map(f=>'- '+f), '', t('questionsLabel')+':', ...data.questions.map(f=>'- '+f) ].join('\n');
   navigator.clipboard.writeText(txt).then(()=>showToast(t('copied'))).catch(()=>showToast(t('copy')+' — select text manually'));
 }
 async function copySecondOpinion(){
@@ -1206,7 +1234,7 @@ async function copySecondOpinion(){
 
 /* ---- chat panel ---- */
 function renderChat(body){
-  body.innerHTML = `<h3>${lang==='hi'?'सवाल पूछें':'Ask this document'}</h3><p class="panel-sub">${lang==='hi'?'जवाब केवल इस दस्तावेज़ पर आधारित हैं।':"Answers stay grounded in this document."}</p>
+  body.innerHTML = `<h3>${t('askDocumentH')}</h3><p class="panel-sub">${t('answersGroundedSub')}</p>
     <div class="chip-row">
       ${(state.doc.isSample ? ['deposit','repair','leave early','entry','rent increase'] : []).map(q=>`<button class="chip" onclick="askChat('${q}')">${lang==='hi'?({'deposit':'जमा राशि?','repair':'मरम्मत किसकी?','leave early':'जल्दी छोड़ने पर?','entry':'प्रवेश नियम?','rent increase':'किराया कब बढ़ेगा?'})[q]:({'deposit':'What’s my deposit?','repair':'Who pays for repairs?','leave early':'What if I leave early?','entry':'Can they enter anytime?','rent increase':'When can rent go up?'})[q]}</button>`).join('')}
     </div>
@@ -1220,7 +1248,7 @@ function renderChat(body){
 }
 function renderChatLog(){
   const log = document.getElementById('chatLog'); if(!log) return;
-  if(state.chat.length===0){ log.innerHTML = `<div class="msg bot">${lang==='hi'?'दस्तावेज़ के बारे में कुछ भी पूछें — जैसे "मेरी जमा राशि कितनी है?"':'Ask anything about the document — try "what’s my deposit?"'}</div>`; return; }
+  if(state.chat.length===0){ log.innerHTML = `<div class="msg bot">${t('chatEmptyHint')}</div>`; return; }
   log.innerHTML = state.chat.map(m=>`<div class="msg ${m.role}">${escapeHtml(m.text)}</div>`).join('');
   log.scrollTop = log.scrollHeight;
 }
@@ -1229,18 +1257,18 @@ async function askChat(q){
   state.chat.push({role:'user', text:q});
   renderChatLog();
   const log = document.getElementById('chatLog');
-  const thinking = document.createElement('div'); thinking.className='msg bot'; thinking.textContent = lang==='hi'?'…':'…'; log.appendChild(thinking); log.scrollTop=log.scrollHeight;
+  const thinking = document.createElement('div'); thinking.className='msg bot'; thinking.textContent = '…'; log.appendChild(thinking); log.scrollTop=log.scrollHeight;
   let answer;
   if(hasLiveKey()){
     try{
       const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
       answer = await callAI(`Answer the user's question using ONLY this document as context. Be concise (under 80 words). If the document doesn't cover it, say so plainly. This is information, not legal advice. ${langInstr}\n\nDOCUMENT:\n${state.doc.text}`, q, false);
-    }catch(err){ answer = null; showToast((lang==='hi'?'लाइव AI विफल — ':'Live AI call failed — ')+err.message, 6000); }
+    }catch(err){ answer = null; showToast(t('liveFailedPrefix')+err.message, 6000); }
   }
   if(!answer){
     await wait(500);
     const hit = CHAT_QA.find(c=>c.k.some(kw=>q.toLowerCase().includes(kw.toLowerCase())));
-    answer = hit ? hit[lang] : (state.doc.isSample ? (lang==='hi'?'नमूना दस्तावेज़ में इसका सीधा जवाब नहीं है — कोशिश करें: जमा, मरम्मत, जल्दी छोड़ना, प्रवेश, या किराया वृद्धि के बारे में पूछें।':'That’s not covered directly in this sample — try asking about the deposit, repairs, leaving early, entry notice, or rent increases.') : mockGenericSummaryText());
+    answer = hit ? hit[lang] : (state.doc.isSample ? t('chatFallbackNote') : mockGenericSummaryText());
   }
   state.chat.push({role:'bot', text:answer});
   renderChatLog();
@@ -1249,13 +1277,13 @@ async function askChat(q){
 /* ---- compare panel ---- */
 function renderCompare(body){
   const d = SAMPLE_COMPARE[lang];
-  body.innerHTML = `<h3>${lang==='hi'?'दस्तावेज़ों की तुलना करें':'Compare two documents'}</h3><p class="panel-sub">${lang==='hi'?'नमूना: दो नौकरी के प्रस्ताव, साथ-साथ।':'Sample: two job offers, side by side.'}</p>
+  body.innerHTML = `<h3>${t('compareTwoH')}</h3><p class="panel-sub">${t('compareSampleSub')}</p>
     <div class="badge" style="margin-bottom:14px;display:inline-block;">${t('demoNote')}</div>
     <div class="compare-grid">
       <div class="compare-col"><h4>${d.left_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='a'?'better':''}">${r.a}</span></div>`).join('')}</div>
       <div class="compare-col"><h4>${d.right_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='b'?'better':''}">${r.b}</span></div>`).join('')}</div>
     </div>
-    <div class="verdict"><b>${lang==='hi'?'निष्कर्ष: ':'Verdict: '}</b>${d.verdict}</div>`;
+    <div class="verdict"><b>${t('verdictLabel')}</b>${d.verdict}</div>`;
 }
 
 /* ---- scenario simulator ---- */
@@ -1279,7 +1307,7 @@ async function askScenario(id){
     try{
       const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
       answer = await callAI(`The user is worried about a specific situation regarding this document. Give a concrete, grounded, practical answer under 100 words, citing the relevant clause if the document has one. This is information, not legal advice. ${langInstr}`, question+'\n\nDOCUMENT:\n'+state.doc.text, false);
-    }catch(e){ answer = null; showToast((lang==='hi'?'लाइव AI विफल — ':'Live AI call failed — ')+e.message, 6000); }
+    }catch(e){ answer = null; showToast(t('liveFailedPrefix')+e.message, 6000); }
   }
   if(!answer){ await wait(600); answer = lang==='hi' ? s.hi_a : s.en_a; }
   showScenarioAnswer(question, answer, false);
@@ -1295,7 +1323,7 @@ async function askCustomScenario(){
     try{
       const langInstr = lang==='hi' ? 'Respond in Hindi.' : 'Respond in English.';
       answer = await callAI(`The user is worried about a specific situation regarding this document. Give a concrete, grounded, practical answer under 100 words, citing the relevant clause if the document has one. This is information, not legal advice. ${langInstr}`, v+'\n\nDOCUMENT:\n'+state.doc.text, false);
-    }catch(e){ answer = null; showToast((lang==='hi'?'लाइव AI विफल — ':'Live AI call failed — ')+e.message, 6000); }
+    }catch(e){ answer = null; showToast(t('liveFailedPrefix')+e.message, 6000); }
   }
   if(!answer){ await wait(600); answer = mockGenericSummaryText(); }
   showScenarioAnswer(v, answer, false);
@@ -1303,7 +1331,7 @@ async function askCustomScenario(){
 function showScenarioAnswer(question, answer, loading){
   const el = document.getElementById('scenarioAnswer'); if(!el) return;
   if(loading){
-    el.innerHTML = `<div class="clause-card"><div class="clause-head"><b>${escapeHtml(question)}</b></div><div class="clause-body"><div class="loading" style="padding:6px 0;"><div class="spinner"></div>${lang==='hi'?'सोच रहा हूँ…':'Working…'}</div></div></div>`;
+    el.innerHTML = `<div class="clause-card"><div class="clause-head"><b>${escapeHtml(question)}</b></div><div class="clause-body"><div class="loading" style="padding:6px 0;"><div class="spinner"></div>${t('working')}</div></div></div>`;
     return;
   }
   el.innerHTML = `<div class="clause-card"><div class="clause-head"><b>${escapeHtml(question)}</b></div><div class="clause-body"><div class="explain">${highlightGlossary(escapeHtml(answer))}</div></div></div>`;
