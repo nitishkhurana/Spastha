@@ -2,52 +2,48 @@
 <meta name="description" content="Spashta turns dense legal documents into plain-language summaries, flags risky clauses, and drafts the message you send back — free to run, nothing stored on a server.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,ital,wght@8..60,0,500;8..60,0,600;8..60,0,700;8..60,1,500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 /* ============ TOKENS ============ */
-/* "Redline" system: the UI borrows its palette straight from tracked-changes
-   markup — strike-red for what's wrong, insert-green for the fix, a
-   ballpoint-blue for interactive/UI chrome, comment-amber for "flag it,
-   don't fix it yet". Var names kept from the earlier palette; values retinted. */
 :root{
-  --paper:#FCFCFC; --paper-raised:#FFFFFF; --paper-sunken:#F1F1F1;
-  --ink-900:#1A1A1A; --ink-700:#434343; --ink-500:#6E6E6E;
-  --line:#DCDCDC; --line-strong:#BABABA;
-  --indigo-500:#1D4ED8; --indigo-600:#1638A8; --indigo-100:#E6ECFB;
-  --marigold-500:#96650A; --marigold-100:#FBEFD6;
-  --signal-red:#B3261E; --signal-red-100:#FBE4E2;
-  --signal-amber:#96650A; --signal-amber-100:#FBEFD6;
-  --signal-green:#15803D; --signal-green-100:#E1F3E7;
-  --shadow-sm:0 1px 2px rgba(26,26,26,0.07);
-  --shadow-md:0 10px 26px rgba(26,26,26,0.09);
-  --radius-s:5px; --radius-m:9px; --radius-l:13px;
+  --paper:#F6F7FB; --paper-raised:#FFFFFF; --paper-sunken:#EEF0F9;
+  --ink-900:#12172B; --ink-700:#454C6B; --ink-500:#6C7290;
+  --line:#DADFEF; --line-strong:#C2C9E6;
+  --indigo-500:#3454D1; --indigo-600:#2A43AA; --indigo-100:#E7ECFC;
+  --marigold-500:#C97A1E; --marigold-100:#FBEBD5;
+  --signal-red:#B23A22; --signal-red-100:#F7E3DE;
+  --signal-amber:#93690E; --signal-amber-100:#F6ECD8;
+  --signal-green:#2F6B4B; --signal-green-100:#E2EFE8;
+  --shadow-sm:0 1px 2px rgba(18,23,43,0.07);
+  --shadow-md:0 8px 24px rgba(18,23,43,0.08);
+  --radius-s:10px; --radius-m:16px; --radius-l:24px;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#161616; --paper-raised:#1F1F1F; --paper-sunken:#131313;
-    --ink-900:#EDEDED; --ink-700:#B8B8B8; --ink-500:#8C8C8C;
-    --line:#333333; --line-strong:#4A4A4A;
-    --indigo-500:#6E93FA; --indigo-600:#93AAFF; --indigo-100:#18234A;
-    --marigold-500:#D9A63E; --marigold-100:#3A2C10;
-    --signal-red:#F2695C; --signal-red-100:#3A1C18;
-    --signal-amber:#D9A63E; --signal-amber-100:#362A12;
-    --signal-green:#46B478; --signal-green-100:#153524;
+    --paper:#0B0E1A; --paper-raised:#141A2E; --paper-sunken:#0F1424;
+    --ink-900:#EDEFF7; --ink-700:#B7BCD6; --ink-500:#8D93B5;
+    --line:#262C46; --line-strong:#333B63;
+    --indigo-500:#7C97FF; --indigo-600:#9DB1FF; --indigo-100:#1B2447;
+    --marigold-500:#E3A159; --marigold-100:#3A2C18;
+    --signal-red:#E2694F; --signal-red-100:#3A2019;
+    --signal-amber:#D6A648; --signal-amber-100:#362C15;
+    --signal-green:#5FAE85; --signal-green-100:#17301F;
     --shadow-sm:0 1px 2px rgba(0,0,0,0.35);
     --shadow-md:0 12px 30px rgba(0,0,0,0.4);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#161616; --paper-raised:#1F1F1F; --paper-sunken:#131313;
-  --ink-900:#EDEDED; --ink-700:#B8B8B8; --ink-500:#8C8C8C;
-  --line:#333333; --line-strong:#4A4A4A;
-  --indigo-500:#6E93FA; --indigo-600:#93AAFF; --indigo-100:#18234A;
-  --marigold-500:#D9A63E; --marigold-100:#3A2C10;
-  --signal-red:#F2695C; --signal-red-100:#3A1C18;
-  --signal-amber:#D9A63E; --signal-amber-100:#362A12;
-  --signal-green:#46B478; --signal-green-100:#153524;
+  --paper:#0B0E1A; --paper-raised:#141A2E; --paper-sunken:#0F1424;
+  --ink-900:#EDEFF7; --ink-700:#B7BCD6; --ink-500:#8D93B5;
+  --line:#262C46; --line-strong:#333B63;
+  --indigo-500:#7C97FF; --indigo-600:#9DB1FF; --indigo-100:#1B2447;
+  --marigold-500:#E3A159; --marigold-100:#3A2C18;
+  --signal-red:#E2694F; --signal-red-100:#3A2019;
+  --signal-amber:#D6A648; --signal-amber-100:#362C15;
+  --signal-green:#5FAE85; --signal-green-100:#17301F;
   --shadow-sm:0 1px 2px rgba(0,0,0,0.35);
   --shadow-md:0 12px 30px rgba(0,0,0,0.4);
   color-scheme:dark;
@@ -61,7 +57,7 @@ body{
   font-size:16px; line-height:1.55; padding-inline:0;
 }
 [lang="hi"], .lang-hi{ font-family:"Noto Sans Devanagari","IBM Plex Sans",sans-serif; }
-h1,h2,h3,h4{ font-family:"Source Serif 4", Georgia, serif; font-weight:600; line-height:1.15; text-wrap:balance; margin:0; color:var(--ink-900); }
+h1,h2,h3,h4{ font-family:"Fraunces", Georgia, serif; font-weight:600; line-height:1.15; text-wrap:balance; margin:0; color:var(--ink-900); }
 p{margin:0;}
 a{color:var(--indigo-500);}
 .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
@@ -82,8 +78,8 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:14px; }
 .brand{ display:flex; align-items:center; gap:10px; }
-.brand-mark{ width:34px; height:34px; border-radius:9px; background:linear-gradient(155deg,var(--indigo-500),var(--indigo-600)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:"Source Serif 4",serif; font-weight:700; font-size:17px; flex:none; box-shadow:var(--shadow-sm); }
-.brand-name{ font-family:"Source Serif 4",serif; font-weight:600; font-size:19px; letter-spacing:-0.01em; }
+.brand-mark{ width:34px; height:34px; border-radius:9px; background:linear-gradient(155deg,var(--indigo-500),var(--indigo-600)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:"Fraunces",serif; font-weight:700; font-size:17px; flex:none; box-shadow:var(--shadow-sm); }
+.brand-name{ font-family:"Fraunces",serif; font-weight:600; font-size:19px; letter-spacing:-0.01em; }
 .brand-tag{ display:none; font-size:12px; color:var(--ink-500); border-left:1px solid var(--line); padding-left:10px; margin-left:2px; }
 @media(min-width:560px){ .brand-tag{display:inline;} }
 .nav-actions{ display:flex; align-items:center; gap:8px; }
@@ -107,7 +103,7 @@ button{ font-family:inherit; cursor:pointer; }
 .btn-ghost{ background:transparent; color:var(--ink-900); border:1px solid var(--line-strong); }
 .btn-ghost:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
 .stat-row{ display:flex; gap:28px; margin-top:34px; flex-wrap:wrap; }
-.stat b{ display:block; font-family:"Source Serif 4",serif; font-size:26px; font-weight:600; font-variant-numeric:tabular-nums; }
+.stat b{ display:block; font-family:"Fraunces",serif; font-size:26px; font-weight:600; font-variant-numeric:tabular-nums; }
 .stat span{ font-size:12.5px; color:var(--ink-500); }
 
 /* hero preview card */
@@ -128,22 +124,12 @@ button{ font-family:inherit; cursor:pointer; }
 .tag.risk-med{ background:var(--signal-amber-100); color:var(--signal-amber); }
 .tag.risk-low{ background:var(--signal-green-100); color:var(--signal-green); }
 
-/* ============ REDLINE MARKS ============ */
-/* The product's core visual language: struck-through original text, and
-   the fix shown the way a real reviewer would insert it. */
-.rl-block{ font-family:"Source Serif 4",Georgia,serif; font-size:14px; line-height:1.75; }
-.rl-del, .rl-ins{ padding:0.05em 0.3em; border-radius:3px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
-.rl-del{ color:var(--signal-red); background:var(--signal-red-100); text-decoration:line-through; text-decoration-thickness:1.5px; text-decoration-color:color-mix(in srgb, var(--signal-red) 70%, transparent); }
-.rl-ins{ color:var(--signal-green); background:var(--signal-green-100); text-decoration:underline; text-decoration-thickness:1.5px; text-decoration-color:color-mix(in srgb, var(--signal-green) 60%, transparent); text-underline-offset:2px; }
-.rl-tag{ display:block; font-family:"IBM Plex Sans",sans-serif; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-500); margin-bottom:7px; }
-.redline-excerpt{ padding:14px 16px; border:1px dashed var(--line-strong); border-radius:var(--radius-s); background:var(--paper-sunken); margin-bottom:14px; }
-
 /* ============ HOW IT WORKS ============ */
 .how{ padding-block:36px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--paper-sunken); }
 .how-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
 @media(max-width:760px){ .how-grid{ grid-template-columns:1fr; } }
 .how-step{ display:flex; gap:14px; }
-.how-num{ font-family:"Source Serif 4",serif; font-weight:600; font-size:22px; color:var(--indigo-500); flex:none; width:38px; }
+.how-num{ font-family:"Fraunces",serif; font-weight:600; font-size:22px; color:var(--indigo-500); flex:none; width:38px; }
 .how-step h4{ font-size:16px; margin-bottom:5px; }
 .how-step p{ font-size:13.5px; color:var(--ink-700); }
 
@@ -200,15 +186,18 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 .clause-head{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--paper-sunken); gap:10px; }
 .clause-head b{ font-size:13.5px; }
 .clause-body{ padding:14px; }
-.clause-body .explain{ font-size:13.5px; color:var(--ink-700); border-top:1px dashed var(--line); padding-top:10px; margin-top:2px; }
+.excerpt{ font-family:"IBM Plex Mono",monospace; font-size:12px; background:var(--paper-sunken); border-left:3px solid var(--line-strong); padding:10px 12px; border-radius:0 var(--radius-s) var(--radius-s) 0; color:var(--ink-700); margin-bottom:10px; }
+.clause-body .explain{ font-size:13.5px; color:var(--ink-900); margin-bottom:10px; }
+.clause-body .fix{ font-size:13px; color:var(--ink-700); border-top:1px dashed var(--line); padding-top:10px; }
+.clause-body .fix b{ color:var(--signal-green); }
 .clause-card.risk-high .clause-head{ border-left:3px solid var(--signal-red); }
 .clause-card.risk-med .clause-head{ border-left:3px solid var(--signal-amber); }
 .clause-card.risk-low .clause-head{ border-left:3px solid var(--signal-green); }
 
 .chat-log{ display:flex; flex-direction:column; gap:12px; margin-bottom:14px; max-height:420px; overflow-y:auto; padding-right:4px; }
-.msg{ max-width:80%; padding:10px 14px; border-radius:var(--radius-s); font-size:14px; line-height:1.55; }
-.msg.user{ align-self:flex-end; background:var(--marigold-100); color:var(--ink-900); border:1px solid color-mix(in srgb, var(--marigold-500) 35%, transparent); border-radius:var(--radius-s) var(--radius-s) 2px var(--radius-s); }
-.msg.bot{ align-self:flex-start; background:var(--paper-raised); border:1px solid var(--line); border-left:3px solid var(--indigo-500); border-radius:2px var(--radius-s) var(--radius-s) var(--radius-s); }
+.msg{ max-width:80%; padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.55; }
+.msg.user{ align-self:flex-end; background:var(--indigo-500); color:#fff; border-bottom-right-radius:4px; }
+.msg.bot{ align-self:flex-start; background:var(--paper-sunken); border:1px solid var(--line); border-bottom-left-radius:4px; }
 .chat-form{ display:flex; gap:8px; }
 .chat-form input{ flex:1; border:1px solid var(--line); border-radius:999px; padding:11px 16px; font-size:14px; background:var(--paper-raised); color:var(--ink-900); }
 .chat-form button{ background:var(--indigo-500); color:#fff; border:none; border-radius:999px; padding:0 18px; font-weight:600; font-size:13.5px; }
@@ -216,7 +205,7 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 .chip{ background:var(--paper-sunken); border:1px solid var(--line); font-size:12.5px; padding:6px 12px; border-radius:999px; color:var(--ink-700); }
 .chip:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
 
-.script-box{ background:var(--paper-sunken); border:1px solid var(--line); border-left:3px solid var(--indigo-500); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:20px 22px; font-size:14.5px; line-height:1.8; white-space:pre-line; margin-bottom:14px; font-family:"Source Serif 4",Georgia,serif; color:var(--ink-900); }
+.script-box{ background:var(--paper-sunken); border:1px solid var(--line); border-radius:var(--radius-s); padding:18px; font-size:13.5px; line-height:1.75; white-space:pre-line; margin-bottom:14px; font-family:"IBM Plex Mono",monospace; }
 .copybtn{ background:var(--paper-raised); border:1px solid var(--line-strong); border-radius:999px; padding:8px 16px; font-size:13px; font-weight:600; color:var(--ink-900); }
 .copybtn:hover{ border-color:var(--indigo-500); color:var(--indigo-500); }
 .copybtn.copied{ background:var(--signal-green-100); border-color:var(--signal-green); color:var(--signal-green); }
@@ -227,8 +216,7 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 .compare-col h4{ font-size:14px; margin-bottom:10px; }
 .compare-row{ display:flex; justify-content:space-between; gap:8px; padding:9px 0; border-top:1px solid var(--line); font-size:13px; }
 .compare-row:first-of-type{ border-top:none; }
-.compare-row .better{ color:var(--signal-green); font-weight:600; text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:2px; }
-.compare-row .worse{ color:var(--signal-red); text-decoration:line-through; text-decoration-thickness:1.5px; opacity:.8; }
+.compare-row .better{ color:var(--signal-green); font-weight:600; }
 .verdict{ margin-top:14px; padding:14px; background:var(--indigo-100); border-radius:var(--radius-s); font-size:13.5px; color:var(--ink-900); }
 
 .brief-grid{ display:grid; gap:16px; }
@@ -266,7 +254,7 @@ footer{ padding-block:34px; }
 
 /* ============ SCORE / EXPOSURE ============ */
 .score-strip{ display:flex; gap:18px; align-items:center; background:var(--paper-sunken); border:1px solid var(--line); border-radius:var(--radius-m); padding:16px 18px; margin-bottom:8px; flex-wrap:wrap; }
-.score-num{ font-family:"Source Serif 4",serif; font-size:32px; font-weight:600; font-variant-numeric:tabular-nums; flex:none; line-height:1; }
+.score-num{ font-family:"Fraunces",serif; font-size:32px; font-weight:600; font-variant-numeric:tabular-nums; flex:none; line-height:1; }
 .score-num small{ font-family:"IBM Plex Sans",sans-serif; font-size:11.5px; font-weight:500; color:var(--ink-500); display:block; margin-top:3px; text-transform:uppercase; letter-spacing:.03em; }
 .score-bar-wrap{ flex:1; min-width:160px; }
 .score-bar{ height:8px; border-radius:99px; background:var(--line); overflow:hidden; }
@@ -322,11 +310,8 @@ footer{ padding-block:34px; }
     </div>
   </div>
   <div class="doc-card">
-    <div class="doc-card-top"><span data-i="previewLabel">rental_agreement.pdf — showing tracked changes</span><div class="dots"><i></i><i></i><i></i></div></div>
-    <div class="redline-excerpt">
-      <span class="rl-tag" data-i="pv0tag">Clause 1 · Security deposit</span>
-      <p class="rl-block"><span class="rl-del" data-i="pv0del">...fully forfeited to the Landlord if the Tenant vacates before completing the full 11-month term, for any reason.</span> <span class="rl-ins" data-i="pv0ins">...capped at a pro-rated amount, refunded within 14 days of vacating.</span></p>
-    </div>
+    <div class="doc-card-top"><span data-i="previewLabel">rental_agreement.pdf — risk scan</span><div class="dots"><i></i><i></i><i></i></div></div>
+    <div class="flag-row risk-high"><div class="stripe"></div><div class="fbody"><span class="tag risk-high" data-i="high">high risk</span><b data-i="pv1t">Security deposit: 10 months' rent</b><span data-i="pv1d">Forfeited entirely if you leave before 11 months — unusually steep and rarely enforceable as-is.</span></div></div>
     <div class="flag-row risk-med"><div class="stripe"></div><div class="fbody"><span class="tag risk-med" data-i="med">medium risk</span><b data-i="pv2t">No repair-cost split</b><span data-i="pv2d">Tenant pays for "all repairs" with no line between wear-and-tear and structural damage.</span></div></div>
     <div class="flag-row risk-low"><div class="stripe"></div><div class="fbody"><span class="tag risk-low" data-i="low">looks fine</span><b data-i="pv3t">Notice period: 30 days</b><span data-i="pv3d">Standard and mutual — no changes needed here.</span></div></div>
   </div>
@@ -426,9 +411,8 @@ en:{
   heroSub:"Paste a lease, offer letter, or policy document. Spashta explains it in plain language, flags the clauses that work against you, and writes the email you send back — all before you spend a rupee on a lawyer.",
   ctaPrimary:"Try the live demo ↓", ctaGhost:"Load sample lease",
   stat1:"to run this demo", stat2:"clause risks it checks for", stat3:"languages, more on request",
-  previewLabel:"rental_agreement.pdf — showing tracked changes",
+  previewLabel:"rental_agreement.pdf — risk scan",
   high:"high risk", med:"medium risk", low:"looks fine",
-  pv0tag:"Clause 1 · Security deposit", pv0del:"...fully forfeited to the Landlord if the Tenant vacates before completing the full 11-month term, for any reason.", pv0ins:"...capped at a pro-rated amount, refunded within 14 days of vacating.",
   pv1t:"Security deposit: 10 months' rent", pv1d:"Forfeited entirely if you leave before 11 months — unusually steep and rarely enforceable as-is.",
   pv2t:"No repair-cost split", pv2d:"Tenant pays for \"all repairs\" with no line between wear-and-tear and structural damage.",
   pv3t:"Notice period: 30 days", pv3d:"Standard and mutual — no changes needed here.",
@@ -474,9 +458,8 @@ hi:{
   heroSub:"किराया अनुबंध, नियुक्ति पत्र या पॉलिसी दस्तावेज़ पेस्ट करें। Spashta इसे सरल भाषा में समझाता है, आपके खिलाफ जाने वाली शर्तों को चिह्नित करता है, और वह ईमेल लिखता है जो आप वापस भेज सकते हैं — वकील पर एक रुपया खर्च करने से पहले।",
   ctaPrimary:"लाइव डेमो आज़माएं ↓", ctaGhost:"नमूना अनुबंध लोड करें",
   stat1:"इस डेमो को चलाने की लागत", stat2:"जाँची गई जोखिम शर्तें", stat3:"भाषाएं, अनुरोध पर और",
-  previewLabel:"rental_agreement.pdf — ट्रैक्ड बदलाव दिखा रहा है",
+  previewLabel:"rental_agreement.pdf — जोखिम जांच",
   high:"उच्च जोखिम", med:"मध्यम जोखिम", low:"ठीक है",
-  pv0tag:"शर्त 1 · सुरक्षा जमा", pv0del:"...11 महीने से पहले छोड़ने पर मकान मालिक के पास पूरी तरह ज़ब्त, किसी भी कारण से।", pv0ins:"...अनुपातिक राशि तक सीमित, छोड़ने के 14 दिनों के भीतर वापस।",
   pv1t:"सुरक्षा जमा: 10 महीने का किराया", pv1d:"11 महीने से पहले छोड़ने पर पूरी तरह ज़ब्त — असामान्य रूप से अधिक और लागू करना मुश्किल।",
   pv2t:"मरम्मत लागत का बंटवारा नहीं", pv2d:"किरायेदार \"सभी मरम्मत\" के लिए भुगतान करता है, सामान्य टूट-फूट और संरचनात्मक नुकसान के बीच कोई रेखा नहीं।",
   pv3t:"सूचना अवधि: 30 दिन", pv3d:"मानक और पारस्परिक — यहाँ कोई बदलाव ज़रूरी नहीं।",
@@ -1085,13 +1068,7 @@ function renderActivePanel(){
       body.innerHTML = `<h3>${lang==='hi'?'जोखिम-चिह्नित शर्तें':'Flagged clauses'}</h3><p class="panel-sub">${lang==='hi'?'हर शर्त की जाँच, आसान शब्दों में।':'Every clause, checked and explained.'}</p>${note}
         ${renderScoreStrip(data)}
         <div class="badge-row"><span class="badge" style="color:var(--signal-red)">${counts.high} ${t('high')}</span><span class="badge" style="color:var(--signal-amber)">${counts.med} ${t('med')}</span><span class="badge" style="color:var(--signal-green)">${counts.low} ${t('low')}</span></div>
-        ${data.map(d=>{
-          const noFixNeeded = /none needed|कोई ज़रूरत नहीं/i.test(d.fix||'');
-          const redline = noFixNeeded
-            ? `<p class="rl-block" style="color:var(--ink-700);">"${highlightGlossary(escapeHtml(d.excerpt),'en')}"</p>`
-            : `<p class="rl-block"><span class="rl-del">${highlightGlossary(escapeHtml(d.excerpt),'en')}</span> <span class="rl-ins">${escapeHtml(d.fix)}</span></p>`;
-          return `<div class="clause-card risk-${d.risk}"><div class="clause-head"><b>${escapeHtml(d.clause)}</b><span class="tag risk-${d.risk}">${t(d.risk==='med'?'med':d.risk)}</span></div><div class="clause-body">${redline}<div class="explain">${highlightGlossary(escapeHtml(d.explain))}</div></div></div>`;
-        }).join('')}`;
+        ${data.map(d=>`<div class="clause-card risk-${d.risk}"><div class="clause-head"><b>${escapeHtml(d.clause)}</b><span class="tag risk-${d.risk}">${t(d.risk==='med'?'med':d.risk)}</span></div><div class="clause-body"><div class="excerpt">"${highlightGlossary(escapeHtml(d.excerpt),'en')}"</div><div class="explain">${highlightGlossary(escapeHtml(d.explain))}</div><div class="fix"><b>${lang==='hi'?'सुझाव:':'Suggested fix:'}</b> ${escapeHtml(d.fix)}</div></div></div>`).join('')}`;
     } else if(kind==='negotiate'){
       body.innerHTML = `<h3>${lang==='hi'?'बातचीत की स्क्रिप्ट':'Negotiation script'}</h3><p class="panel-sub">${lang==='hi'?'तैयार संदेश — बस भेजें।':'Ready to send, edit as needed.'}</p>${note}<div class="script-box" id="scriptText">${escapeHtml(data.text)}</div><div class="action-row"><button class="copybtn" id="copyBtn" onclick="copyScript()">${t('copy')}</button><button class="copybtn" id="speakNegotiateBtn" onclick="speakNegotiate()">${t('readAloud')}</button></div>`;
     } else if(kind==='lawyer'){
@@ -1180,8 +1157,8 @@ function renderCompare(body){
   body.innerHTML = `<h3>${lang==='hi'?'दस्तावेज़ों की तुलना करें':'Compare two documents'}</h3><p class="panel-sub">${lang==='hi'?'नमूना: दो नौकरी के प्रस्ताव, साथ-साथ।':'Sample: two job offers, side by side.'}</p>
     <div class="badge" style="margin-bottom:14px;display:inline-block;">${t('demoNote')}</div>
     <div class="compare-grid">
-      <div class="compare-col"><h4>${d.left_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='a'?'better':'worse'}">${r.a}</span></div>`).join('')}</div>
-      <div class="compare-col"><h4>${d.right_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='b'?'better':'worse'}">${r.b}</span></div>`).join('')}</div>
+      <div class="compare-col"><h4>${d.left_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='a'?'better':''}">${r.a}</span></div>`).join('')}</div>
+      <div class="compare-col"><h4>${d.right_title}</h4>${d.rows.map(r=>`<div class="compare-row"><span>${r.label}</span><span class="${r.better==='b'?'better':''}">${r.b}</span></div>`).join('')}</div>
     </div>
     <div class="verdict"><b>${lang==='hi'?'निष्कर्ष: ':'Verdict: '}</b>${d.verdict}</div>`;
 }
