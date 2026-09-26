@@ -153,15 +153,23 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 .hint{ font-size:12px; color:var(--ink-500); }
 
 /* workspace */
-.workspace{ margin-top:28px; display:grid; grid-template-columns:210px 1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; box-shadow:var(--shadow-sm); background:var(--paper-raised); }
+.workspace{ margin-top:28px; display:grid; grid-template-columns:236px 1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; box-shadow:var(--shadow-sm); background:var(--paper-raised); }
 @media(max-width:780px){ .workspace{ grid-template-columns:1fr; } }
-.folder-tabs{ background:var(--paper-sunken); border-right:1px solid var(--line); padding:14px 10px; display:flex; flex-direction:column; gap:3px; }
-@media(max-width:780px){ .folder-tabs{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line); } }
-.ftab{ text-align:left; background:transparent; border:none; padding:10px 12px; border-radius:var(--radius-s); font-size:13.5px; font-weight:500; color:var(--ink-700); display:flex; align-items:center; gap:9px; white-space:nowrap; }
-.ftab:hover{ background:var(--paper-raised); }
-.ftab.active{ background:var(--paper-raised); color:var(--indigo-500); font-weight:600; box-shadow:var(--shadow-sm); }
-.ftab .dot{ width:6px; height:6px; border-radius:50%; background:var(--line-strong); flex:none; }
-.ftab.active .dot{ background:var(--indigo-500); }
+.folder-tabs{ background:var(--paper-sunken); border-right:1px solid var(--line); padding:16px 10px; display:flex; flex-direction:column; gap:4px; }
+@media(max-width:780px){ .folder-tabs{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line); padding:10px; } }
+.folder-tabs-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-500); padding:2px 10px 10px; }
+@media(max-width:780px){ .folder-tabs-label{ display:none; } }
+.ftab{ text-align:left; background:transparent; border:1px solid transparent; padding:9px 10px; border-radius:var(--radius-s); font-size:13.5px; font-weight:500; color:var(--ink-700); display:flex; align-items:center; gap:11px; white-space:nowrap; transition:background .15s, border-color .15s, transform .1s; }
+.ftab:hover{ background:var(--paper-raised); border-color:var(--line); }
+.ftab:active{ transform:scale(0.98); }
+.ftab.active{ background:var(--paper-raised); color:var(--indigo-600); font-weight:600; border-color:var(--indigo-500); box-shadow:var(--shadow-sm); }
+.ftab-icon{ width:32px; height:32px; border-radius:9px; background:var(--paper-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:15px; flex:none; line-height:1; transition:background .15s, border-color .15s, transform .15s; }
+.ftab.active .ftab-icon{ background:var(--indigo-500); border-color:var(--indigo-500); transform:scale(1.06); }
+.ftab-label{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+.ftab-title{ line-height:1.2; overflow:hidden; text-overflow:ellipsis; }
+.ftab-sub{ font-size:10.5px; font-weight:500; color:var(--ink-500); line-height:1.2; }
+.ftab.active .ftab-sub{ color:var(--indigo-500); }
+@media(max-width:780px){ .ftab-sub{ display:none; } .ftab{ flex-direction:column; gap:6px; padding:10px 14px; } .ftab-icon{ width:28px; height:28px; } }
 
 .panelbody{ padding:24px; min-height:340px; }
 .panelbody h3{ font-size:19px; margin-bottom:4px; }
@@ -218,17 +226,6 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 
 .toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink-900); color:var(--paper); font-size:13px; padding:11px 18px; border-radius:999px; box-shadow:var(--shadow-md); opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:100; max-width:90vw; text-align:center; }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-/* ============ COST TABLE ============ */
-.costs{ padding-block:52px; border-top:1px solid var(--line); }
-.cost-table{ width:100%; border-collapse:collapse; margin-top:20px; font-size:13.5px; }
-.cost-table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius-m); }
-.cost-table th{ text-align:left; background:var(--paper-sunken); padding:12px 16px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-500); white-space:nowrap; }
-.cost-table td{ padding:13px 16px; border-top:1px solid var(--line); vertical-align:top; }
-.cost-table tr td:first-child{ font-weight:600; white-space:nowrap; }
-.cost-pill{ display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--signal-green-100); color:var(--signal-green); white-space:nowrap; }
-.total-line{ margin-top:16px; font-size:14px; color:var(--ink-700); }
-.total-line b{ color:var(--ink-900); }
 
 /* ============ ROADMAP ============ */
 .roadmap{ padding-block:52px; background:var(--paper-sunken); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
@@ -364,24 +361,6 @@ footer{ padding-block:34px; }
   </div>
 </div></section>
 
-<!-- ============ COST / FREE STACK ============ -->
-<section class="costs"><div class="wrap">
-  <h2 data-i="costTitle">What this actually costs to run</h2>
-  <p style="color:var(--ink-700);font-size:14.5px;margin-top:8px;max-width:70ch;" data-i="costSub">Every piece of this demo has a free tier that's generous enough for a hackathon, a pilot, or a small NGO's real usage. Nothing below required a credit card.</p>
-  <div class="cost-table-wrap"><table class="cost-table">
-    <thead><tr><th data-i="ch1">Piece</th><th data-i="ch2">Free option used here</th><th data-i="ch3">Free limit</th><th data-i="ch4">Cost to start</th></tr></thead>
-    <tbody>
-      <tr><td data-i="cr1a">AI model</td><td data-i="cr1b">Google Gemini 3.8 Flash API</td><td data-i="cr1c">~1,500 requests/day free tier</td><td><span class="cost-pill">₹0</span></td></tr>
-      <tr><td data-i="cr2a">Hosting</td><td data-i="cr2b">GitHub Pages / Netlify / Vercel / Cloudflare Pages</td><td data-i="cr2c">Unlimited static hosting on free plan</td><td><span class="cost-pill">₹0</span></td></tr>
-      <tr><td data-i="cr3a">PDF reading</td><td data-i="cr3b">pdf.js (runs in the browser)</td><td data-i="cr3c">No server, no limit</td><td><span class="cost-pill">₹0</span></td></tr>
-      <tr><td data-i="cr4a">Storage</td><td data-i="cr4b">Browser localStorage only</td><td data-i="cr4c">No database needed for MVP</td><td><span class="cost-pill">₹0</span></td></tr>
-      <tr><td data-i="cr5a">WhatsApp channel <em>(roadmap)</em></td><td data-i="cr5b">Meta WhatsApp Cloud API</td><td data-i="cr5c">1,000 free conversations/month</td><td><span class="cost-pill">₹0</span></td></tr>
-      <tr><td data-i="cr6a">Custom domain <em>(optional)</em></td><td data-i="cr6b">.pages.dev / .vercel.app / .github.io</td><td data-i="cr6c">Free forever; custom domain ~₹800–1,000/yr if wanted</td><td><span class="cost-pill">₹0*</span></td></tr>
-    </tbody>
-  </table></div>
-  <p class="total-line" data-i="totalLine"><b>Total to build and demo this: ₹0.</b> The only thing that ever costs money is scaling past free-tier request limits — and by then it's a funded pilot, not a hackathon project.</p>
-</div></section>
-
 <!-- ============ ROADMAP (the non-obvious part) ============ -->
 <section class="roadmap"><div class="wrap">
   <span class="eyebrow">◆ <span data-i="roadEyebrow">Beyond the demo</span></span>
@@ -446,16 +425,6 @@ en:{
   dropText:"Drag a .pdf or .txt file here, or", browseText:"browse a file",
   hintSample:"Sample document ready — click analyse.", hintPaste:"Paste your document, then click analyse.", hintUpload:"Choose a file, then click analyse.", hintReady:"File loaded — click analyse.",
   analyseBtn:"Analyse document →",
-  costTitle:"What this actually costs to run",
-  costSub:"Every piece of this demo has a free tier that's generous enough for a hackathon, a pilot, or a small NGO's real usage. Nothing below required a credit card.",
-  ch1:"Piece", ch2:"Free option used here", ch3:"Free limit", ch4:"Cost to start",
-  cr1a:"AI model", cr1b:"Google Gemini 3.8 Flash API", cr1c:"~1,500 requests/day free tier",
-  cr2a:"Hosting", cr2b:"GitHub Pages / Netlify / Vercel / Cloudflare Pages", cr2c:"Unlimited static hosting on free plan",
-  cr3a:"PDF reading", cr3b:"pdf.js (runs in the browser)", cr3c:"No server, no limit",
-  cr4a:"Storage", cr4b:"Browser localStorage only", cr4c:"No database needed for MVP",
-  cr5a:"WhatsApp channel (roadmap)", cr5b:"Meta WhatsApp Cloud API", cr5c:"1,000 free conversations/month",
-  cr6a:"Custom domain (optional)", cr6b:".pages.dev / .vercel.app / .github.io", cr6c:"Free forever; custom domain ~₹800–1,000/yr if wanted",
-  totalLine:"Total to build and demo this: ₹0. The only thing that ever costs money is scaling past free-tier request limits — and by then it's a funded pilot, not a hackathon project.",
   roadEyebrow:"Beyond the demo", roadTitle:"The part that actually moves the needle",
   roadSub:"Explaining a document is table stakes — every legal-AI demo does that. The features below are what turn \"I understand my lease now\" into \"I got a better lease.\"",
   rc1t:"Negotiation script, not just a summary", rc1d:"Most people who understand a bad clause still don't know how to push back. Spashta drafts the actual message — polite, specific, citing the clause — so the hardest part is just hitting send.",
@@ -468,6 +437,7 @@ en:{
   modalClear:"Clear keys", modalSave:"Save & close", modalClose:"Close",
   modalNote:"Stored only in this browser's localStorage — never sent anywhere but each provider's own API. Note: live calls only work when this page is self-hosted (GitHub Pages, Netlify, etc.) — this hosted preview runs in a sandbox that blocks outbound API calls, so it will gracefully fall back to demo output here.",
   tabs:{summary:"Summary",risks:"Risk flags",ask:"Ask questions",negotiate:"Negotiate",scenarios:"What if…?",compare:"Compare",lawyer:"Lawyer prep"},
+  exploreLabel:"Explore this document",
   demoNote:"Showing demo output — live AI needs a key and a self-hosted copy of this page (sandboxed previews block outbound calls). See the API-key panel for details.",
   copy:"Copy", copied:"Copied ✓",
   chatPlaceholder:"Ask about this document…", chatSend:"Ask",
@@ -502,16 +472,6 @@ hi:{
   dropText:"यहाँ .pdf या .txt फ़ाइल खींचें, या", browseText:"फ़ाइल चुनें",
   hintSample:"नमूना दस्तावेज़ तैयार है — विश्लेषण पर क्लिक करें।", hintPaste:"अपना दस्तावेज़ पेस्ट करें, फिर विश्लेषण पर क्लिक करें।", hintUpload:"एक फ़ाइल चुनें, फिर विश्लेषण पर क्लिक करें।", hintReady:"फ़ाइल लोड हो गई — विश्लेषण पर क्लिक करें।",
   analyseBtn:"दस्तावेज़ का विश्लेषण करें →",
-  costTitle:"इसे चलाने की वास्तविक लागत",
-  costSub:"इस डेमो के हर हिस्से में एक मुफ़्त स्तर है जो हैकथॉन, पायलट या छोटे एनजीओ के वास्तविक उपयोग के लिए पर्याप्त है। नीचे किसी के लिए क्रेडिट कार्ड की ज़रूरत नहीं थी।",
-  ch1:"हिस्सा", ch2:"यहाँ इस्तेमाल किया गया मुफ़्त विकल्प", ch3:"मुफ़्त सीमा", ch4:"शुरू करने की लागत",
-  cr1a:"AI मॉडल", cr1b:"Google Gemini 3.8 Flash API", cr1c:"~1,500 अनुरोध/दिन मुफ़्त",
-  cr2a:"होस्टिंग", cr2b:"GitHub Pages / Netlify / Vercel / Cloudflare Pages", cr2c:"मुफ़्त प्लान पर असीमित स्टैटिक होस्टिंग",
-  cr3a:"PDF पढ़ना", cr3b:"pdf.js (ब्राउज़र में चलता है)", cr3c:"कोई सर्वर नहीं, कोई सीमा नहीं",
-  cr4a:"स्टोरेज", cr4b:"सिर्फ़ ब्राउज़र localStorage", cr4c:"MVP के लिए डेटाबेस ज़रूरी नहीं",
-  cr5a:"WhatsApp चैनल (आगामी)", cr5b:"Meta WhatsApp Cloud API", cr5c:"1,000 मुफ़्त बातचीत/माह",
-  cr6a:"कस्टम डोमेन (वैकल्पिक)", cr6b:".pages.dev / .vercel.app / .github.io", cr6c:"हमेशा मुफ़्त; कस्टम डोमेन चाहें तो ~₹800–1,000/वर्ष",
-  totalLine:"इसे बनाने और डेमो करने की कुल लागत: ₹0। पैसा तभी लगता है जब मुफ़्त सीमा पार हो — और तब तक यह फंडेड पायलट बन चुका होता है, हैकथॉन प्रोजेक्ट नहीं।",
   roadEyebrow:"डेमो से आगे", roadTitle:"वह हिस्सा जो असल फ़र्क़ लाता है",
   roadSub:"दस्तावेज़ समझाना तो हर लीगल-AI डेमो करता है। नीचे दी गई सुविधाएं \"अब मुझे अनुबंध समझ आया\" को \"मुझे बेहतर अनुबंध मिला\" में बदलती हैं।",
   rc1t:"सिर्फ़ सारांश नहीं, बातचीत की स्क्रिप्ट", rc1d:"ख़राब शर्त समझने वाले ज़्यादातर लोग भी नहीं जानते कि कैसे इनकार करें। Spashta असली संदेश लिखता है — विनम्र, स्पष्ट, शर्त का हवाला देते हुए।",
@@ -524,6 +484,7 @@ hi:{
   modalClear:"कुंजियाँ हटाएं", modalSave:"सेव करें", modalClose:"बंद करें",
   modalNote:"केवल इस ब्राउज़र के localStorage में संग्रहीत — किसी और को नहीं भेजा जाता, सिर्फ़ उस प्रोवाइडर के अपने API को। नोट: लाइव कॉल तभी काम करती हैं जब यह पेज खुद होस्ट किया गया हो।",
   tabs:{summary:"सारांश",risks:"जोखिम",ask:"सवाल पूछें",negotiate:"बातचीत",scenarios:"अगर ऐसा हो...?",compare:"तुलना",lawyer:"वकील तैयारी"},
+  exploreLabel:"इस दस्तावेज़ को समझें",
   demoNote:"नमूना आउटपुट दिखाया जा रहा है — लाइव AI के लिए कुंजी और स्वयं-होस्टेड पेज चाहिए।",
   copy:"कॉपी करें", copied:"कॉपी हो गया ✓",
   chatPlaceholder:"इस दस्तावेज़ के बारे में पूछें…", chatSend:"पूछें",
@@ -862,10 +823,24 @@ function runAnalysis(){
   document.getElementById('workspace').scrollIntoView({behavior:'smooth', block:'start'});
   renderActivePanel();
 }
+const TAB_META = {
+  summary:{icon:'📄', en_sub:'Plain language', hi_sub:'सरल भाषा'},
+  risks:{icon:'🚩', en_sub:"What's risky", hi_sub:'क्या जोखिम है'},
+  ask:{icon:'💬', en_sub:'Chat', hi_sub:'बातचीत'},
+  negotiate:{icon:'✉️', en_sub:'Ready to send', hi_sub:'भेजने के लिए तैयार'},
+  scenarios:{icon:'🤔', en_sub:'Your scenario', hi_sub:'आपकी स्थिति'},
+  compare:{icon:'⚖️', en_sub:'Two documents', hi_sub:'दो दस्तावेज़'},
+  lawyer:{icon:'🧾', en_sub:'Save time & money', hi_sub:'समय व पैसा बचाएं'},
+};
 function buildFolderTabs(){
   const wrap = document.getElementById('folderTabs');
   const tabs = ['summary','risks','ask','negotiate','scenarios','compare','lawyer'];
-  wrap.innerHTML = tabs.map(id=>`<button class="ftab ${id===state.activeTab?'active':''}" onclick="switchTab('${id}')"><span class="dot"></span>${t('tabs')[id]}</button>`).join('');
+  const label = `<div class="folder-tabs-label">${t('exploreLabel')}</div>`;
+  wrap.innerHTML = label + tabs.map(id=>{
+    const meta = TAB_META[id];
+    const sub = lang==='hi' ? meta.hi_sub : meta.en_sub;
+    return `<button class="ftab ${id===state.activeTab?'active':''}" onclick="switchTab('${id}')"><span class="ftab-icon">${meta.icon}</span><span class="ftab-label"><span class="ftab-title">${t('tabs')[id]}</span><span class="ftab-sub">${sub}</span></span></button>`;
+  }).join('');
 }
 function switchTab(id){ stopSpeaking(); state.activeTab=id; buildFolderTabs(); renderActivePanel(); }
 
