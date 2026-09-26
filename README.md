@@ -106,11 +106,62 @@ Groq's free tier has no daily credit budget, only a per-minute rate limit,
 which makes it a good backstop for whenever Gemini's daily quota or
 capacity is the thing blocking you.
 
-Paste either or both into Spashta's API key modal (⚙ top-right).
+Paste either or both into Spashta's API key modal (⚙ top-right) if you want
+to use your own quota. This is entirely optional — see below.
 
 **Note:** live API calls work once this page is self-hosted. If you're
 viewing this as a Claude Artifact preview, outbound API calls are sandboxed
 and it will gracefully fall back to demo output — that's expected, not a bug.
+
+## Deploying the AI proxy (optional — makes live AI work with zero setup)
+
+By default, live mode requires each visitor to paste their own free API
+key. For a hackathon submission, that's friction an evaluator shouldn't
+have to deal with just to see the real thing work. The fix: a small
+**Cloudflare Worker** (free, no card, 100,000 requests/day) that holds
+*your* keys server-side and proxies requests for every visitor. No key is
+ever shipped to the browser — the Worker is the only place they live.
+
+This is optional. Without it, the site still works exactly as described
+above (BYO key, or demo output). With it, live AI just works for anyone
+who opens the link.
+
+**What it does and doesn't protect against:** the Worker checks the
+request's `Origin` header and only answers requests from your exact
+GitHub Pages domain, with CORS locked to the same origin — this stops
+casual scraping and embedding-elsewhere. It does *not* add user auth or
+rate limiting beyond what Gemini/Groq's own free tiers already enforce,
+so someone who inspects your site's Network tab could technically replay
+requests against your proxy. Since both keys are free-tier with no
+billing attached, the worst case is your daily quota gets used up, not a
+bill — an appropriately-scoped protection for a judging window, not a
+production auth system. Rotate/delete the keys once judging ends if you
+want to close even that door.
+
+### Setup (~10 minutes)
+
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com), sign up free
+   (no card required).
+2. **Workers & Pages → Create → Create Worker.** Give it any name (e.g.
+   `spashta-proxy`) and deploy the default template first.
+3. Click **Edit code**, delete the placeholder content, and paste in the
+   contents of [proxy/worker.js](proxy/worker.js) from this repo.
+4. In that file, confirm `ALLOWED_ORIGIN` matches your GitHub Pages URL
+   exactly (`https://<your-username>.github.io`).
+5. Click **Deploy**.
+6. Go to the Worker's **Settings → Variables and Secrets** and add two
+   **secret** (encrypted) variables: `GEMINI_API_KEY` and `GROQ_API_KEY`,
+   using the free keys from the section above. Secrets aren't visible
+   again after saving, only usable by the Worker.
+7. Copy the Worker's URL (shown at the top of its dashboard page, looks
+   like `https://spashta-proxy.<your-subdomain>.workers.dev`).
+8. In `index.html`, find `const PROXY_URL = '';` near the top of the
+   `<script>` block and paste your Worker's URL between the quotes.
+9. Commit and push — GitHub Pages redeploys automatically, and live AI
+   now works for anyone who opens your link, no key needed.
+
+To turn it off later, just clear `PROXY_URL` back to `''` and push — the
+site falls back to BYO-key / demo mode immediately.
 
 ## What this costs, in full
 
@@ -135,16 +186,22 @@ rupee).
 ```
 Browser (index.html, single file)
  ├─ Document input: paste / upload (pdf.js extracts text client-side)
- ├─ AI layer: Gemini (Interactions API) with retry + model fallback,
- │            then Groq (OpenAI-compatible) if Gemini fails,
- │            then hand-written mock data if no key / both fail
+ ├─ AI layer, tried in order:
+ │    1. Visitor's own Gemini key, if set (retry + model fallback)
+ │    2. Visitor's own Groq key, if set
+ │    3. Shared proxy/worker.js (optional) — zero-setup live AI for
+ │       every visitor, keys held server-side, never sent to the browser
+ │    4. Hand-written mock data, if everything above is unavailable
  ├─ 7 panels: Summary · Risk flags · Ask · Negotiate · What if…? · Compare · Lawyer prep
  └─ State: localStorage only (API keys, language preference)
 ```
 
-No backend by design: it keeps hosting free, keeps the user's document and
-API key off any server Spashta controls (privacy matters more here than in
-most apps), and keeps the hackathon submission deployable in one click.
+No backend by design for the site itself: it keeps hosting free, keeps
+the user's document off any server Spashta controls (privacy matters more
+here than in most apps), and keeps the submission deployable in one
+click. The one optional exception is the AI proxy (see above) — a single
+small Worker whose only job is holding the site owner's own keys, so
+evaluators don't need their own.
 
 ## Roadmap beyond this demo
 
