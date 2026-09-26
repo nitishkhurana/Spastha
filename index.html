@@ -159,13 +159,11 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 .hint{ font-size:12px; color:var(--ink-500); }
 
 /* workspace */
-.workspace{ margin-top:28px; display:grid; grid-template-columns:236px 1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; box-shadow:var(--shadow-sm); background:var(--paper-raised); }
-@media(max-width:780px){ .workspace{ grid-template-columns:1fr; } }
-.folder-tabs{ background:var(--paper-sunken); border-right:1px solid var(--line); padding:16px 10px; display:flex; flex-direction:column; gap:4px; }
-@media(max-width:780px){ .folder-tabs{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line); padding:10px; } }
-.folder-tabs-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-500); padding:2px 10px 10px; }
-@media(max-width:780px){ .folder-tabs-label{ display:none; } }
-.ftab{ text-align:left; background:transparent; border:1px solid transparent; padding:9px 10px; border-radius:var(--radius-s); font-size:13.5px; font-weight:500; color:var(--ink-700); display:flex; align-items:center; gap:11px; white-space:nowrap; transition:background .15s, border-color .15s, transform .1s; }
+.workspace{ margin-top:28px; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; box-shadow:var(--shadow-sm); background:var(--paper-raised); }
+.folder-tabs{ background:var(--paper-sunken); border-bottom:1px solid var(--line); padding:10px; display:flex; flex-direction:row; align-items:center; gap:4px; overflow-x:auto; }
+.folder-tabs-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-500); padding:0 10px; flex:none; white-space:nowrap; }
+@media(max-width:560px){ .folder-tabs-label{ display:none; } }
+.ftab{ text-align:left; background:transparent; border:1px solid transparent; padding:9px 10px; border-radius:var(--radius-s); font-size:13.5px; font-weight:500; color:var(--ink-700); display:flex; align-items:center; gap:11px; white-space:nowrap; flex:none; transition:background .15s, border-color .15s, transform .1s; }
 .ftab:hover{ background:var(--paper-raised); border-color:var(--line); }
 .ftab:active{ transform:scale(0.98); }
 .ftab.active{ background:var(--paper-raised); color:var(--indigo-600); font-weight:600; border-color:var(--indigo-500); box-shadow:var(--shadow-sm); }
@@ -175,7 +173,7 @@ textarea{ width:100%; min-height:140px; resize:vertical; border:1px solid var(--
 .ftab-title{ line-height:1.2; overflow:hidden; text-overflow:ellipsis; }
 .ftab-sub{ font-size:10.5px; font-weight:500; color:var(--ink-500); line-height:1.2; }
 .ftab.active .ftab-sub{ color:var(--indigo-500); }
-@media(max-width:780px){ .ftab-sub{ display:none; } .ftab{ flex-direction:column; gap:6px; padding:10px 14px; } .ftab-icon{ width:28px; height:28px; } }
+@media(max-width:560px){ .ftab-sub{ display:none; } .ftab{ flex-direction:column; gap:6px; padding:10px 14px; } .ftab-icon{ width:28px; height:28px; } }
 
 .panelbody{ padding:24px; min-height:340px; }
 .panelbody h3{ font-size:19px; margin-bottom:4px; }
@@ -365,7 +363,7 @@ footer{ padding-block:34px; }
   </div>
 
   <div class="workspace" id="workspace" hidden>
-    <div class="folder-tabs" id="folderTabs" role="tablist" aria-orientation="vertical"></div>
+    <div class="folder-tabs" id="folderTabs" role="tablist" aria-orientation="horizontal"></div>
     <div class="panelbody" id="panelBody" role="tabpanel" aria-live="polite"></div>
   </div>
 </div></section>
