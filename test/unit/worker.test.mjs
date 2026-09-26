@@ -149,6 +149,7 @@ describe('Groq routing', () => {
     assert.equal(sentBody.messages[1].content, 'input2');
     assert.equal(sentBody.response_format.type, 'json_object');
     assert.equal(sentBody.temperature, 0.2);
+    assert.ok(sentBody.max_tokens >= 4096, 'needs enough headroom for 4-8 full-verbatim clauses, not just a short summary — a real truncated-JSON 400 traced back to this being unset');
     assert.equal(sentBody.seed, 42);
   });
 

@@ -75,6 +75,7 @@ export default {
             ],
             temperature: 0.2,
             seed: 42,
+            max_tokens: 4096,
             ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
           }),
         });
