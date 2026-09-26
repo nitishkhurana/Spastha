@@ -72,9 +72,12 @@ install`, no server.
 - **Demo mode (default):** every panel shows realistic, hand-written sample
   output for the included sample lease and sample job-offer comparison.
   This is what a judge sees with zero setup.
-- **Live mode:** click the "API key" button top-right, paste a free Google
-  Gemini API key, and every panel calls Gemini 3.8 Flash on your own pasted
-  or uploaded text instead.
+- **Live mode:** click the "API key" button top-right and paste a free
+  Google Gemini key, a free Groq key, or both. Every panel then calls the
+  model live on your own pasted or uploaded text instead. With both keys
+  set, Spashta tries Gemini first and automatically falls back to Groq if
+  Gemini is rate-limited or overloaded — either key alone is enough to
+  turn live mode on.
 
 ## Deploying it for free
 
@@ -91,14 +94,19 @@ All four give you a free `*.pages.dev` / `*.vercel.app` / `*.netlify.app` /
 `*.github.io` subdomain. A custom domain (optional, not required for a
 hackathon demo) is typically ₹800–1,000/year from any registrar.
 
-### Getting a free Gemini API key (for live mode)
+### Getting free API keys (for live mode)
 
-1. Go to `aistudio.google.com/apikey`
-2. Sign in, click "Create API key" — no credit card required
-3. Paste it into Spashta's API key modal
+**Gemini** (primary): go to `aistudio.google.com/apikey`, sign in, click
+"Create API key" — no credit card required. The free tier covers roughly
+1,500 requests/day on Gemini 3.8 Flash.
 
-The free tier (as of this writing) covers roughly 1,500 requests/day on
-Gemini 3.8 Flash — far more than a hackathon demo or small pilot needs.
+**Groq** (fallback, optional but recommended): go to
+`console.groq.com/keys`, sign up, generate a key — also no card required.
+Groq's free tier has no daily credit budget, only a per-minute rate limit,
+which makes it a good backstop for whenever Gemini's daily quota or
+capacity is the thing blocking you.
+
+Paste either or both into Spashta's API key modal (⚙ top-right).
 
 **Note:** live API calls work once this page is self-hosted. If you're
 viewing this as a Claude Artifact preview, outbound API calls are sandboxed
@@ -109,6 +117,7 @@ and it will gracefully fall back to demo output — that's expected, not a bug.
 | Piece | Free option used here | Free limit | Cost to start |
 |---|---|---|---|
 | AI model | Google Gemini 3.8 Flash API | ~1,500 requests/day | ₹0 |
+| AI model (fallback) | Groq API (Llama 3.3 70B) | Rate-limited only, no daily cap | ₹0 |
 | Hosting | GitHub Pages / Netlify / Vercel / Cloudflare Pages | Unlimited static hosting | ₹0 |
 | PDF reading | pdf.js (runs in-browser) | No server, no limit | ₹0 |
 | Storage | Browser `localStorage` only | No DB needed for MVP | ₹0 |
@@ -126,10 +135,11 @@ rupee).
 ```
 Browser (index.html, single file)
  ├─ Document input: paste / upload (pdf.js extracts text client-side)
- ├─ AI layer: tries Gemini REST API with a user-supplied key
- │            falls back to hand-written mock data if no key / call fails
- ├─ 6 panels: Summary · Risk flags · Ask · Negotiate · Compare · Lawyer prep
- └─ State: localStorage only (API key, language preference)
+ ├─ AI layer: Gemini (Interactions API) with retry + model fallback,
+ │            then Groq (OpenAI-compatible) if Gemini fails,
+ │            then hand-written mock data if no key / both fail
+ ├─ 7 panels: Summary · Risk flags · Ask · Negotiate · What if…? · Compare · Lawyer prep
+ └─ State: localStorage only (API keys, language preference)
 ```
 
 No backend by design: it keeps hosting free, keeps the user's document and
