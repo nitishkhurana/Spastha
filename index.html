@@ -1105,8 +1105,12 @@ async function liveGenerate(kind){
     return { text: await callAI(`You are a plain-language legal explainer. Summarise the document in under 150 words, 8th-grade reading level, no legal jargon. Add a one-line closing pointer to what's worth double-checking. Never give jurisdiction-specific legal advice; note this explains the document, not legal advice. ${langInstr}`, doc, false) };
   }
   if(kind==='risks'){
-    const raw = await callAI(`Analyse this legal document clause by clause. Return ONLY a JSON array, each item: {"clause": short id/name, "risk": "high"|"med"|"low", "excerpt": the relevant clause quoted in full, verbatim from the document — do not shorten, summarise, or truncate it, even if long, "explain": plain-language reason, "fix": one concrete negotiation ask}. 4-8 items covering the most important clauses. ${langInstr}`, doc, true);
-    try{ return JSON.parse(stripJsonFence(raw)); }catch(e){ throw new Error('Could not parse risk analysis JSON from Gemini'); }
+    const raw = await callAI(`Analyse this legal document clause by clause. Return ONLY a JSON object of the form {"clauses": [...]} — a top-level object, not a bare array — where each item in "clauses" is: {"clause": short id/name, "risk": "high"|"med"|"low", "excerpt": the relevant clause quoted in full, verbatim from the document — do not shorten, summarise, or truncate it, even if long, "explain": plain-language reason, "fix": one concrete negotiation ask}. 4-8 items covering the most important clauses. ${langInstr}`, doc, true);
+    let parsed;
+    try{ parsed = JSON.parse(stripJsonFence(raw)); }catch(e){ throw new Error('Could not parse risk analysis JSON from Gemini'); }
+    const clauses = Array.isArray(parsed) ? parsed : parsed?.clauses;
+    if(!Array.isArray(clauses)) throw new Error('Risk analysis JSON had no clauses array');
+    return clauses;
   }
   if(kind==='negotiate'){
     return { text: await callAI(`Draft a short, polite email from the signer to the other party requesting amendments to the 2-3 riskiest clauses in this document. Reference clauses by name, propose a specific fair alternative for each, keep it under 200 words, professional tone. ${langInstr}`, doc, false) };
